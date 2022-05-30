@@ -8,7 +8,8 @@ add_executable(tests
         tests/test.cpp)
 
 add_executable(main
-        source/main.cpp)
+        source/main.cpp
+        source/value.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
