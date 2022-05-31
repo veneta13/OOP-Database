@@ -10,7 +10,7 @@ const float EPSILON = 0.00001f;
 
 
 /// Represents the value of a table cell with a floating point number
-class FloatValue  : public Value {
+class FloatValue : public Value {
     /// The value in the cell
     float value;
 
