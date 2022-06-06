@@ -108,6 +108,23 @@ TEST_CASE("Integer value tests")
         iv.set(6);
         REQUIRE(iv.get() == 6);
     }
+
+    SECTION("Operator <<")
+    {
+        IntegerValue iv(-2), iv1(+3);
+        std::stringstream out, out1, out2, out3;
+        out << iv;
+        REQUIRE(out.str() == "-2");
+
+        out1 << std::setw(10) << iv;
+        REQUIRE(out1.str() == "        -2");
+
+        out2 << iv1;
+        REQUIRE(out2.str() == "3");
+
+        out3 << std::setw(10) << iv1;
+        REQUIRE(out3.str() == "         3");
+    }
 }
 
 TEST_CASE("Floating point value tests")

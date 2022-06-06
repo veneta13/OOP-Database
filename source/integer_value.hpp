@@ -33,6 +33,8 @@ public:
 
     int get() const;
     void set(int _value);
+
+    friend std::ostream& operator<<(std::ostream& out, IntegerValue const& iv);
 };
 
 

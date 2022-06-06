@@ -143,3 +143,13 @@ bool IntegerValue::operator>(int other) const {
 bool IntegerValue::operator<(int other) const {
     return value < other;
 }
+
+
+/// Stream insertion operator
+/// \param out output stream
+/// \param sv integer to output
+/// \return the stream with integer inserted
+std::ostream& operator<<(std::ostream& out, IntegerValue const& iv) {
+    out << iv.value;
+    return out;
+}
