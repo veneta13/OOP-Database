@@ -81,7 +81,7 @@ int IntegerValue::operator*(int other) const {
 }
 
 
-/// Compare with equality
+/// Compare with equality operator
 /// \param other IntegerValue to compare to
 /// \return if the current value is equal to the other
 bool IntegerValue::operator==(const IntegerValue &other) const {
