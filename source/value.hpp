@@ -1,7 +1,7 @@
 #ifndef STACK_VALUE_HPP
 #define STACK_VALUE_HPP
 
-
+/// Represents the value of a table cell
 class Value {
 public:
     Value();
