@@ -19,7 +19,7 @@ public:
     FloatValue(float _value);
     FloatValue(FloatValue const& other);
     FloatValue& operator=(FloatValue const& other);
-    ~FloatValue();
+    ~FloatValue() override;
 
     float operator+(FloatValue const& other) const;
     float operator+(float other) const;

@@ -13,7 +13,7 @@ public:
     IntegerValue(int _value);
     IntegerValue(IntegerValue const& other);
     IntegerValue& operator=(IntegerValue const& other);
-    ~IntegerValue();
+    ~IntegerValue() override;
 
     int operator+(IntegerValue const& other) const;
     int operator+(int other) const;
