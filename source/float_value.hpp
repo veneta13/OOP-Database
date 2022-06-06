@@ -39,6 +39,8 @@ public:
 
     double get() const;
     void set(double _value);
+
+    friend std::ostream& operator<<(std::ostream& out, FloatValue const& fv);
 };
 
 

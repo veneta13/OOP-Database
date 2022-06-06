@@ -143,3 +143,13 @@ bool FloatValue::operator>(double other) const {
 bool FloatValue::operator<(double other) const {
     return value < other;
 }
+
+
+/// Stream insertion operator
+/// \param out output stream
+/// \param sv floating point number to output
+/// \return the stream with floating point number inserted
+std::ostream& operator<<(std::ostream& out, FloatValue const& fv) {
+    out << fv.value;
+    return out;
+}

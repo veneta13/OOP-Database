@@ -226,6 +226,23 @@ TEST_CASE("Floating point value tests")
         fv.set(30.214);
         REQUIRE(std::fabs(fv.get() - 30.214) < EPSILON);
     }
+
+    SECTION("Operator <<")
+    {
+        FloatValue fv(-2.32), fv1(+8.97);
+        std::stringstream out, out1, out2, out3;
+        out << fv;
+        REQUIRE(out.str() == "-2.32");
+
+        out1 << std::setw(10) << fv;
+        REQUIRE(out1.str() == "     -2.32");
+
+        out2 << fv1;
+        REQUIRE(out2.str() == "8.97");
+
+        out3 << std::setw(10) << fv1;
+        REQUIRE(out3.str() == "      8.97");
+    }
 }
 
 TEST_CASE("String value tests")
