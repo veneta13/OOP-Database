@@ -24,6 +24,8 @@ public:
 
     char* get() const;
     void set(char const* _value);
+
+    friend std::ostream& operator<<(std::ostream& out, StringValue const& sv);
 };
 
 #endif

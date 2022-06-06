@@ -274,6 +274,17 @@ TEST_CASE("String value tests")
         sv.set("dummy value");
         REQUIRE(strcmp(sv.get(), "dummy value") == 0);
     }
+
+    SECTION("Operator <<")
+    {
+        StringValue sv("dummy value");
+        std::stringstream out, out1;
+        out << sv;
+        REQUIRE(out.str() == "dummy value");
+
+        out1 << std::setw(20) << sv;
+        REQUIRE(out1.str() == "         dummy value");
+    }
 }
 
 TEST_CASE("NULL value tests")

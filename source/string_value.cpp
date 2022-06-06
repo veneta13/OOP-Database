@@ -91,3 +91,13 @@ bool StringValue::operator!=(char const *other) const {
     if (!value || !other) { return false; }
     return (strcmp(value, other) != 0);
 }
+
+
+/// Stream insertion operator
+/// \param out output stream
+/// \param sv string to output
+/// \return the stream with string inserted
+std::ostream& operator<<(std::ostream& out, StringValue const& sv) {
+    out << sv.value;
+    return out;
+}
