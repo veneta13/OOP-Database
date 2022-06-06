@@ -269,6 +269,6 @@ TEST_CASE("String value tests")
         StringValue sv;
         REQUIRE(!sv.get());
         sv.set("dummy value");
-        REQUIRE(strcmp(sv.get(), "dummy value"));
+        REQUIRE(strcmp(sv.get(), "dummy value") == 0);
     }
 }
