@@ -9,14 +9,16 @@ add_executable(tests
         source/value.cpp
         source/integer_value.cpp
         source/float_value.cpp
-        source/string_value.cpp)
+        source/string_value.cpp
+        source/null_value.cpp)
 
 add_executable(main
         source/main.cpp
         source/value.cpp
         source/integer_value.cpp
         source/float_value.cpp
-        source/string_value.cpp)
+        source/string_value.cpp
+        source/null_value.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
