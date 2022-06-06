@@ -4,6 +4,9 @@
 #include "../source/integer_value.hpp"
 #include "../source/float_value.hpp"
 #include "../source/string_value.hpp"
+#include "../source/null_value.hpp"
+
+#include <typeinfo>
 
 
 TEST_CASE("Integer value tests")
@@ -270,5 +273,16 @@ TEST_CASE("String value tests")
         REQUIRE(!sv.get());
         sv.set("dummy value");
         REQUIRE(strcmp(sv.get(), "dummy value") == 0);
+    }
+}
+
+TEST_CASE("NULL value tests")
+{
+    SECTION("Check for NULL cell")
+    {
+        Value* nv = new NullValue();
+        REQUIRE(typeid(*nv) == typeid(NullValue&));
+        REQUIRE(typeid(*nv) != typeid(StringValue&));
+        delete nv;
     }
 }
