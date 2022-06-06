@@ -3,6 +3,7 @@
 
 #include "../source/integer_value.hpp"
 #include "../source/float_value.hpp"
+#include "../source/string_value.hpp"
 
 
 TEST_CASE("Integer value tests")
@@ -204,5 +205,70 @@ TEST_CASE("Floating point value tests")
         REQUIRE(std::fabs(fv.get() - 10.821) < EPSILON);
         fv.set(30.214);
         REQUIRE(std::fabs(fv.get() - 30.214) < EPSILON);
+    }
+}
+
+TEST_CASE("String value tests")
+{
+    SECTION("Default constructor")
+    {
+        StringValue sv;
+        REQUIRE(!sv.get());
+    }
+
+    SECTION("Constructor with parameters")
+    {
+        StringValue sv("dummy value");
+        REQUIRE(strcmp(sv.get(), "dummy value") == 0);
+    }
+
+    SECTION("Copy constructor")
+    {
+        StringValue sv("dummy value");
+        StringValue sv1(sv);
+        REQUIRE(strcmp(sv.get(), "dummy value") == 0);
+        REQUIRE(strcmp(sv.get(), sv1.get()) == 0);
+    }
+
+    SECTION("Operator =")
+    {
+        StringValue sv("dummy value");
+        StringValue sv1 = sv;
+        REQUIRE(strcmp(sv.get(), "dummy value") == 0);
+        REQUIRE(strcmp(sv.get(), sv1.get()) == 0);
+    }
+
+    SECTION("Operator ==")
+    {
+        StringValue sv("dummy value"), sv1("dummy value 2");
+        StringValue sv2(sv);
+        REQUIRE(!(sv == sv1));
+        REQUIRE(sv == sv);
+        REQUIRE(sv == sv2);
+        REQUIRE(sv == "dummy value");
+        REQUIRE(!(sv == "dummy value 2"));
+        REQUIRE(sv1 == "dummy value 2");
+        REQUIRE(!(sv1 == "dummy value"));
+    }
+
+    SECTION("Operator !=")
+    {
+        StringValue sv("dummy value"), sv1("dummy value 2");
+        StringValue sv2(sv);
+        REQUIRE(sv != sv1);
+        REQUIRE(!(sv != sv));
+        REQUIRE(!(sv != sv2));
+        REQUIRE(!(sv != "dummy value"));
+        REQUIRE(sv != "dummy value 2");
+        REQUIRE(!(sv1 != "dummy value 2"));
+        REQUIRE(sv1 != "dummy value");
+    }
+
+    SECTION("Getter and setter")
+    {
+        StringValue sv;
+        REQUIRE(!sv.get());
+        sv.set("dummy value");
+        REQUIRE(strcmp(sv.get(), "dummy value"));
     }
 }
