@@ -6,39 +6,39 @@
 #include <cmath>
 
 ///Helper for floating point number comparisons
-const float EPSILON = 0.00001f;
+const double EPSILON = 0.000001f;
 
 
 /// Represents the value of a table cell with a floating point number
 class FloatValue : public Value {
     /// The value in the cell
-    float value;
+    double value;
 
 public:
     FloatValue();
-    FloatValue(float _value);
+    FloatValue(double _value);
     FloatValue(FloatValue const& other);
     FloatValue& operator=(FloatValue const& other);
     ~FloatValue() override;
 
-    float operator+(FloatValue const& other) const;
-    float operator+(float other) const;
+    double operator+(FloatValue const& other) const;
+    double operator+(double other) const;
 
-    float operator*(FloatValue const& other) const;
-    float operator*(float other) const;
+    double operator*(FloatValue const& other) const;
+    double operator*(double other) const;
 
     bool operator>(FloatValue const& other) const;
     bool operator==(FloatValue const& other) const;
     bool operator!=(FloatValue const& other) const;
     bool operator<(FloatValue const& other) const;
 
-    bool operator>(float other) const;
-    bool operator==(float other) const;
-    bool operator!=(float other) const;
-    bool operator<(float other) const;
+    bool operator>(double other) const;
+    bool operator==(double other) const;
+    bool operator!=(double other) const;
+    bool operator<(double other) const;
 
-    float get() const;
-    void set(float _value);
+    double get() const;
+    void set(double _value);
 };
 
 
