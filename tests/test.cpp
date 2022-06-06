@@ -296,4 +296,15 @@ TEST_CASE("NULL value tests")
         REQUIRE(typeid(*nv) != typeid(StringValue&));
         delete nv;
     }
+
+    SECTION("Operator <<")
+    {
+        NullValue nv;
+        std::stringstream out, out1;
+        out << nv;
+        REQUIRE(out.str() == "NULL");
+
+        out1 << std::setw(10) << nv;
+        REQUIRE(out1.str() == "      NULL");
+    }
 }

@@ -17,3 +17,13 @@ NullValue &NullValue::operator=(NullValue const &other) = default;
 
 /// Destructor
 NullValue::~NullValue() = default;
+
+
+/// Stream insertion operator
+/// \param out output stream
+/// \param sv NULL to output
+/// \return the stream with NULL inserted
+std::ostream& operator<<(std::ostream& out, NullValue const& nv) {
+    out << "NULL";
+    return out;
+}

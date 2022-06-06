@@ -11,6 +11,8 @@ public:
     NullValue(NullValue const &other);
     NullValue &operator=(NullValue const &other);
     ~NullValue() override;
+
+    friend std::ostream& operator<<(std::ostream& out, NullValue const& nv);
 };
 
 
