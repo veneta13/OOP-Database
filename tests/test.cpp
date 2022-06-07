@@ -5,9 +5,174 @@
 #include "../source/float_value.hpp"
 #include "../source/string_value.hpp"
 #include "../source/null_value.hpp"
+#include "../source/dynamic_array.hpp"
 
 #include <typeinfo>
 
+TEST_CASE("Dynamic array tests")
+{
+    SECTION("Default constructor")
+    {
+        DynamicArray<const char*> array;
+        REQUIRE(array.size() == 0);
+    }
+
+    SECTION("Constructor with parameter")
+    {
+        DynamicArray<const char*> array(3);
+        REQUIRE(array.size() == 0);
+    }
+
+    SECTION("Copy constructor")
+    {
+        DynamicArray<const char*> array;
+        const char* str = "dummy string";
+        array.push_back(str);
+
+        REQUIRE(strcmp(array[0], str) == 0);
+        REQUIRE(array.size() == 1);
+
+        DynamicArray<const char*> copy(array);
+        REQUIRE(strcmp(copy[0], str) == 0);
+        REQUIRE(strcmp(copy[0], array[0]) == 0);
+        REQUIRE(copy.size() == 1);
+    }
+
+    SECTION("Operator =")
+    {
+        DynamicArray<const char*> array;
+        const char* str = "dummy string";
+        array.push_back(str);
+
+        REQUIRE(strcmp(array[0], str) == 0);
+        REQUIRE(array.size() == 1);
+
+        DynamicArray<const char*> copy = array;
+        REQUIRE(strcmp(copy[0], str) == 0);
+        REQUIRE(strcmp(copy[0], array[0]) == 0);
+        REQUIRE(copy.size() == 1);
+    }
+
+    SECTION("Expand")
+    {
+        DynamicArray<const char*> array;
+        const char* str1 = "dummy string";
+        const char* str2 = "dummy string 2";
+        const char* str3 = "dummy string 3";
+        const char* str4 = "dummy string 4";
+        const char* str5 = "dummy string 5";
+        const char* str6 = "dummy string 6";
+
+        array.push_back(str1);
+        array.push_back(str2);
+        array.push_back(str3);
+        array.push_back(str4);
+        array.push_back(str5);
+        array.push_back(str6);
+
+        REQUIRE(strcmp(array[0], str1) == 0);
+        REQUIRE(strcmp(array[1], str2) == 0);
+        REQUIRE(strcmp(array[2], str3) == 0);
+        REQUIRE(strcmp(array[3], str4) == 0);
+        REQUIRE(strcmp(array[4], str5) == 0);
+        REQUIRE(strcmp(array[5], str6) == 0);
+        REQUIRE(array.size() == 6);
+    }
+
+    SECTION("Operator []")
+    {
+        DynamicArray<const char*> array;
+        const char* str1 = "dummy string";
+        const char* str2 = "dummy string 2";
+
+        array.push_back(str1);
+        array.push_back(str2);
+
+        REQUIRE(strcmp(array[0], str1) == 0);
+        REQUIRE(strcmp(array[1], str2) == 0);
+    }
+
+    SECTION("Insert")
+    {
+        DynamicArray<const char*> array;
+        const char* str1 = "dummy string";
+        const char* str2 = "dummy string 2";
+
+        array.insert(str1, 0);
+        array.insert(str2, 2);
+
+        REQUIRE(strcmp(array[0], str1) == 0);
+        REQUIRE(strcmp(array[2], str2) == 0);
+    }
+
+    SECTION("Push")
+    {
+        DynamicArray<const char*> array;
+        const char* str1 = "dummy string";
+        const char* str2 = "dummy string 2";
+        const char* str3 = "dummy string 3";
+
+        array.push_back(str1);
+        array.push_back(str2);
+        array.push_back(str3);
+
+        REQUIRE(strcmp(array[0], str1) == 0);
+        REQUIRE(strcmp(array[1], str2) == 0);
+        REQUIRE(strcmp(array[2], str3) == 0);
+    }
+
+    SECTION("Erase")
+    {
+        DynamicArray<const char*> array;
+        const char* str1 = "dummy string";
+        const char* str2 = "dummy string 2";
+        const char* str3 = "dummy string 3";
+
+        array.push_back(str1);
+        array.push_back(str2);
+        array.push_back(str3);
+
+        REQUIRE(array.size() == 3);
+        REQUIRE(strcmp(array[0], str1) == 0);
+        REQUIRE(strcmp(array[1], str2) == 0);
+        REQUIRE(strcmp(array[2], str3) == 0);
+
+        array.erase(2);
+        REQUIRE(array.size() == 2);
+
+        array.erase(1);
+        REQUIRE(array.size() == 1);
+
+        array.erase(0);
+        REQUIRE(array.size() == 0);
+    }
+
+    SECTION("Pop")
+    {
+        DynamicArray<const char*> array;
+        const char* str1 = "dummy string";
+        const char* str2 = "dummy string 2";
+        const char* str3 = "dummy string 3";
+
+        array.push_back(str1);
+        array.push_back(str2);
+        array.push_back(str3);
+
+        REQUIRE(array.size() == 3);
+        REQUIRE(strcmp(array[0], str1) == 0);
+        REQUIRE(strcmp(array[1], str2) == 0);
+        REQUIRE(strcmp(array[2], str3) == 0);
+
+        array.pop_back();
+        REQUIRE(array.size() == 2);
+
+        array.pop_back();
+        REQUIRE(array.size() == 1);
+
+        array.pop_back();
+        REQUIRE(array.size() == 0);
+    }
+}
 
 TEST_CASE("Integer value tests")
 {

@@ -5,6 +5,7 @@ include(CTest)
 enable_testing()
 
 add_executable(tests
+        source/dynamic_array.cpp
         tests/test.cpp
         source/value.cpp
         source/integer_value.cpp
@@ -13,6 +14,7 @@ add_executable(tests
         source/null_value.cpp)
 
 add_executable(main
+        source/dynamic_array.cpp
         source/main.cpp
         source/value.cpp
         source/integer_value.cpp
