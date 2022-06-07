@@ -1,11 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include "../source/integer_value.hpp"
-#include "../source/float_value.hpp"
-#include "../source/string_value.hpp"
-#include "../source/null_value.hpp"
-#include "../source/dynamic_array.hpp"
+#include "../source/table_column.hpp"
 
 #include <typeinfo>
 
