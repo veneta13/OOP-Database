@@ -161,3 +161,4 @@ int DynamicArray<T>::size() {
 }
 
 template class DynamicArray<char const*>;
+template class DynamicArray<int>;
