@@ -7,14 +7,17 @@
 #include "null_value.hpp"
 #include "dynamic_array.hpp"
 
+/// Represents the type of data in a column
+enum ColumnType {
+    Integer = 1,
+    FloatingPoint = 2,
+    String = 3
+};
+
+
 /// Represents the table column interface
 class TableColumn {
 public:
-
-    /// Initialize column with NULL
-    /// \param rowCount number of rows in the column
-    virtual void nullify(int rowCount) = 0;
-
 
     /// Update the values
     /// \param oldValue value to update
@@ -41,23 +44,27 @@ public:
     /// Count the rows containing a certain element
     /// \param value element to search for
     /// \return number of rows containing the element
-    virtual int count(Value* value) = 0;
+    virtual int countValue(Value* value) = 0;
 
 
     /// Print the sum of all elements of the column
-    virtual void sum() = 0;
+    virtual void sum(std::ostream& out) = 0;
 
 
     /// Print the product of all elements of the column
-    virtual void product() = 0;
+    virtual void product(std::ostream& out) = 0;
 
 
     /// Print the maximal element of the column
-    virtual void maximum() = 0;
+    virtual void maximum(std::ostream& out) = 0;
 
 
     /// Print the minimal element of the column
-    virtual void minimum() = 0;
+    virtual void minimum(std::ostream& out) = 0;
+
+    /// Get the type of the column
+    /// \return type of values saved in the column
+    virtual ColumnType columnType() = 0;
 };
 
 
