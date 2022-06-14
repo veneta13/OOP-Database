@@ -1,7 +1,3 @@
-//
-// Created by Pc on 14.6.2022 г..
-//
-
 #ifndef STACK_FLOAT_COLUMN_HPP
 #define STACK_FLOAT_COLUMN_HPP
 
