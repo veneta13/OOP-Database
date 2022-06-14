@@ -74,14 +74,19 @@ public:
     /// Print the minimal element of the column
     virtual void minimum(std::ostream& out) = 0;
 
+
     /// Get the type of the column
     /// \return type of values saved in the column
     virtual ColumnType columnType() = 0;
+
 
     /// Print row
     /// \param out stream to insert row in
     /// \param index index of the row to print
     virtual void print(std::ostream &out, int index, int width) = 0;
+
+    /// Virtual destructor
+    virtual ~TableColumn() = default;
 };
 
 
