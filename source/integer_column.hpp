@@ -44,6 +44,8 @@ public:
     void product(std::ostream& out) override;
     void maximum(std::ostream& out) override;
     void minimum(std::ostream& out) override;
+
+    void print(std::ostream &out, int index, int width) override;
 };
 
 #endif //STACK_INTEGER_COLUMN_HPP

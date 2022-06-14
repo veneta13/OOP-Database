@@ -6,7 +6,9 @@
 #include "string_value.hpp"
 #include "null_value.hpp"
 #include "dynamic_array.hpp"
+
 #include <typeinfo>
+#include <iomanip>
 
 /// Represents the type of data in a column
 enum ColumnType {
@@ -75,6 +77,11 @@ public:
     /// Get the type of the column
     /// \return type of values saved in the column
     virtual ColumnType columnType() = 0;
+
+    /// Print row
+    /// \param out stream to insert row in
+    /// \param index index of the row to print
+    virtual void print(std::ostream &out, int index, int width) = 0;
 };
 
 

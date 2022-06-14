@@ -272,3 +272,15 @@ void FloatColumn::minimum(std::ostream& out) {
 
     out << "MIN: " << min << "\n";
 }
+
+
+void FloatColumn::print(std::ostream &out, int index, int width) {
+    Value* element = operator[](index);
+
+    if (typeid(*element) == typeid(NullValue&)) {
+        out << std::setw(width) << *dynamic_cast<NullValue*>(element);
+    }
+    else {
+        out << std::setw(width) << *dynamic_cast<FloatValue*>(element);
+    }
+}

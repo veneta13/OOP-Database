@@ -897,6 +897,39 @@ TEST_CASE("Integer column tests")
         delete intv9;
         delete nullv;
     }
+
+    SECTION("Print")
+    {
+        IntegerValue* intv5 = new IntegerValue(5);
+        IntegerValue* intv2 = new IntegerValue(2);
+        IntegerValue* intv9 = new IntegerValue(9);
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic, ic1(5);
+        ic.insert(intv5);
+        ic.insert(intv5);
+        ic.insert(intv2);
+        ic.insert(intv9);
+        ic.insert(nullv);
+
+        std::stringstream out, out2;
+
+        for (int i = 0; i < ic.size(); i++) {
+            ic.print(out, i, 5);
+        }
+
+        for (int i = 0; i < ic1.size(); i++) {
+            ic1.print(out2, i, 5);
+        }
+
+        REQUIRE(out.str() == "    5    5    2    9 NULL");
+        REQUIRE(out2.str() == " NULL NULL NULL NULL NULL");
+
+        delete intv5;
+        delete intv2;
+        delete intv9;
+        delete nullv;
+    }
 }
 
 
@@ -1288,6 +1321,39 @@ TEST_CASE("Float column tests")
         REQUIRE(out.str() == "MIN: 2.2\n");
         REQUIRE(out1.str() == "Column contains only NULL!\n");
         REQUIRE(out2.str() == "EMPTY COLUMN - no MIN value!\n");
+
+        delete flov5;
+        delete flov2;
+        delete flov9;
+        delete nullv;
+    }
+
+    SECTION("Print")
+    {
+        FloatValue* flov5 = new FloatValue(5.5);
+        FloatValue* flov2 = new FloatValue(2.2);
+        FloatValue* flov9 = new FloatValue(9.9);;
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc, fc1(5);
+        fc.insert(flov5);
+        fc.insert(flov5);
+        fc.insert(flov2);
+        fc.insert(flov9);
+        fc.insert(nullv);
+
+        std::stringstream out, out2;
+
+        for (int i = 0; i < fc.size(); i++) {
+            fc.print(out, i, 5);
+        }
+
+        for (int i = 0; i < fc1.size(); i++) {
+            fc1.print(out2, i, 5);
+        }
+
+        REQUIRE(out.str() == "  5.5  5.5  2.2  9.9 NULL");
+        REQUIRE(out2.str() == " NULL NULL NULL NULL NULL");
 
         delete flov5;
         delete flov2;
