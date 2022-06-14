@@ -12,7 +12,7 @@ FloatColumn::FloatColumn() {
 /// \param _count number of null values
 FloatColumn::FloatColumn(int _count) {
     count = _count;
-    capacity = _count * 2;
+    capacity = (_count == 0) ? 5 : _count * 2;
     elements = new Value*[capacity];
     nullify(_count);
 }
