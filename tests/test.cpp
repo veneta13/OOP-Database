@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include "../source/table_column.hpp"
+#include "../source/integer_column.hpp"
 
 #include <typeinfo>
 
@@ -501,5 +501,376 @@ TEST_CASE("NULL value tests")
 
         out1 << std::setw(10) << nv;
         REQUIRE(out1.str() == "      NULL");
+    }
+}
+
+TEST_CASE("Integer column tests")
+{
+    SECTION("Default constructor")
+    {
+        NullValue* nullv = new NullValue();
+        IntegerColumn ic;
+
+        REQUIRE(ic.columnType() == ColumnType::Integer);
+        REQUIRE(ic.countValue(nullv) == 0);
+
+        delete nullv;
+    }
+
+    SECTION("Constructor with parameter")
+    {
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic(2);
+
+        REQUIRE(ic.countValue(nullv) == 2);
+
+        delete nullv;
+    }
+
+    SECTION("Copy constructor")
+    {
+        IntegerValue* intv = new IntegerValue(5);
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic;
+        ic.insert(intv);
+        ic.insert(nullv);
+        REQUIRE(ic.countValue(nullv) == 1);
+        REQUIRE(ic.countValue(intv) == 1);
+
+        IntegerColumn ic2(ic);
+        REQUIRE(ic.countValue(nullv) == 1);
+        REQUIRE(ic.countValue(intv) == 1);
+
+        delete intv;
+        delete nullv;
+    }
+
+    SECTION("Operator =")
+    {
+        IntegerValue* intv = new IntegerValue(5);
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic;
+        ic.insert(intv);
+        ic.insert(nullv);
+        REQUIRE(ic.countValue(nullv) == 1);
+        REQUIRE(ic.countValue(intv) == 1);
+
+        IntegerColumn ic2 = ic;
+        REQUIRE(ic.countValue(nullv) == 1);
+        REQUIRE(ic.countValue(intv) == 1);
+
+        delete intv;
+        delete nullv;
+    }
+
+    SECTION("Operator []")
+    {
+        IntegerValue* intv5 = new IntegerValue(5);
+        IntegerValue* intv2 = new IntegerValue(2);
+        IntegerValue* intv9 = new IntegerValue(9);;
+
+        IntegerColumn ic;
+        ic.insert(intv5);
+        ic.insert(intv5);
+        ic.insert(intv2);
+        ic.insert(intv9);
+
+        REQUIRE((*dynamic_cast<IntegerValue*>(ic[0])) == (*intv5));
+        REQUIRE((*dynamic_cast<IntegerValue*>(ic[1])) == (*intv5));
+        REQUIRE((*dynamic_cast<IntegerValue*>(ic[2])) == (*intv2));
+        REQUIRE((*dynamic_cast<IntegerValue*>(ic[3])) == (*intv9));
+
+        delete intv5;
+        delete intv2;
+        delete intv9;
+    }
+
+    SECTION("Insert")
+    {
+        IntegerValue* intv5 = new IntegerValue(5);
+        IntegerValue* intv2 = new IntegerValue(2);
+        IntegerValue* intv9 = new IntegerValue(9);
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic;
+        ic.insert(intv5);
+        ic.insert(intv5);
+        ic.insert(intv2);
+        ic.insert(intv9);
+        ic.insert(nullv);
+
+        REQUIRE(ic.countValue(intv5) == 2);
+        REQUIRE(ic.countValue(intv2) == 1);
+        REQUIRE(ic.countValue(intv9) == 1);
+        REQUIRE(ic.countValue(nullv) == 1);
+
+        delete intv5;
+        delete intv2;
+        delete intv9;
+        delete nullv;
+    }
+
+    SECTION("Update")
+    {
+        IntegerValue* intv5 = new IntegerValue(5);
+        IntegerValue* intv2 = new IntegerValue(2);
+        IntegerValue* intv9 = new IntegerValue(9);
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic;
+        ic.insert(intv5);
+        ic.insert(intv5);
+        ic.insert(intv2);
+
+        REQUIRE(ic.countValue(intv5) == 2);
+        REQUIRE(ic.countValue(intv2) == 1);
+        REQUIRE(ic.countValue(intv9) == 0);
+
+        ic.update(intv2, intv9);
+        REQUIRE(ic.countValue(intv5) == 2);
+        REQUIRE(ic.countValue(intv2) == 0);
+        REQUIRE(ic.countValue(intv9) == 1);
+
+        ic.update(intv9, intv5);
+        REQUIRE(ic.countValue(intv5) == 3);
+        REQUIRE(ic.countValue(intv2) == 0);
+        REQUIRE(ic.countValue(intv9) == 0);
+
+        ic.update(intv5, nullv);
+        REQUIRE(ic.countValue(intv5) == 0);
+        REQUIRE(ic.countValue(intv2) == 0);
+        REQUIRE(ic.countValue(intv9) == 0);
+        REQUIRE(ic.countValue(nullv) == 3);
+
+        delete intv5;
+        delete intv2;
+        delete intv9;
+        delete nullv;
+    }
+
+    SECTION("Delete by indexes")
+    {
+        DynamicArray<int> indexes;
+
+        IntegerValue* intv5 = new IntegerValue(5);
+        IntegerValue* intv2 = new IntegerValue(2);
+        IntegerValue* intv9 = new IntegerValue(9);
+        NullValue* nullv = new NullValue();
+
+        indexes.push_back(1);
+        indexes.push_back(2);
+
+        IntegerColumn ic;
+        ic.insert(intv5);
+        ic.insert(intv5);
+        ic.insert(intv2);
+        ic.insert(intv9);
+        ic.insert(nullv);
+
+        REQUIRE(ic.countValue(intv5) == 2);
+        REQUIRE(ic.countValue(intv2) == 1);
+        REQUIRE(ic.countValue(intv9) == 1);
+        REQUIRE(ic.countValue(nullv) == 1);
+
+        ic.deleteByIndexes(indexes);
+
+        REQUIRE(ic.countValue(intv5) == 1);
+        REQUIRE(ic.countValue(intv2) == 0);
+        REQUIRE(ic.countValue(intv9) == 1);
+        REQUIRE(ic.countValue(nullv) == 1);
+
+        ic.deleteByIndexes(indexes);
+
+        REQUIRE(ic.countValue(intv5) == 1);
+        REQUIRE(ic.countValue(intv2) == 0);
+        REQUIRE(ic.countValue(intv9) == 0);
+        REQUIRE(ic.countValue(nullv) == 0);
+
+        delete intv5;
+        delete intv2;
+        delete intv9;
+        delete nullv;
+    }
+
+    SECTION("Select")
+    {
+        DynamicArray<int> indexes;
+
+        IntegerValue* intv5 = new IntegerValue(5);
+        IntegerValue* intv2 = new IntegerValue(2);
+        IntegerValue* intv9 = new IntegerValue(9);
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic;
+        ic.insert(intv5);
+        ic.insert(intv5);
+        ic.insert(intv2);
+        ic.insert(intv9);
+        ic.insert(nullv);
+
+        REQUIRE(ic.countValue(intv5) == 2);
+        REQUIRE(ic.countValue(intv2) == 1);
+        REQUIRE(ic.countValue(intv9) == 1);
+        REQUIRE(ic.countValue(nullv) == 1);
+
+        ic.select(intv5, indexes);
+        REQUIRE(indexes.size() == 2);
+        REQUIRE(indexes[0] == 0);
+        REQUIRE(indexes[1] == 1);
+
+        ic.select(intv9, indexes);
+        REQUIRE(indexes.size() == 3);
+        REQUIRE(indexes[0] == 0);
+        REQUIRE(indexes[1] == 1);
+        REQUIRE(indexes[2] == 3);
+
+        delete intv5;
+        delete intv2;
+        delete intv9;
+        delete nullv;
+    }
+
+    SECTION("Count")
+    {
+        DynamicArray<int> indexes;
+
+        IntegerValue* intv5 = new IntegerValue(5);
+        IntegerValue* intv2 = new IntegerValue(2);
+        IntegerValue* intv9 = new IntegerValue(9);
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic;
+        ic.insert(intv5);
+        ic.insert(intv5);
+        ic.insert(intv2);
+        ic.insert(intv9);
+        ic.insert(nullv);
+
+        REQUIRE(ic.countValue(intv5) == 2);
+        REQUIRE(ic.countValue(intv2) == 1);
+        REQUIRE(ic.countValue(intv9) == 1);
+        REQUIRE(ic.countValue(nullv) == 1);
+
+        delete intv5;
+        delete intv2;
+        delete intv9;
+        delete nullv;
+    }
+
+    SECTION("Column type")
+    {
+        IntegerColumn ic;
+        REQUIRE(ic.columnType() == ColumnType::Integer);
+    }
+
+    SECTION("Sum")
+    {
+        IntegerValue* intv5 = new IntegerValue(5);
+        IntegerValue* intv2 = new IntegerValue(2);
+        IntegerValue* intv9 = new IntegerValue(9);
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic;
+        ic.insert(intv5);
+        ic.insert(intv5);
+        ic.insert(intv2);
+        ic.insert(intv9);
+        ic.insert(nullv);
+
+        std::stringstream out;
+        ic.sum(out);
+
+        REQUIRE(out.str() == "SUM OF COLUMN: 21\n");
+
+        delete intv5;
+        delete intv2;
+        delete intv9;
+        delete nullv;
+    }
+
+    SECTION("Product")
+    {
+        IntegerValue* intv5 = new IntegerValue(5);
+        IntegerValue* intv2 = new IntegerValue(2);
+        IntegerValue* intv9 = new IntegerValue(9);
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic;
+        ic.insert(intv5);
+        ic.insert(intv5);
+        ic.insert(intv2);
+        ic.insert(intv9);
+        ic.insert(nullv);
+
+        std::stringstream out;
+        ic.product(out);
+
+        REQUIRE(out.str() == "PRODUCT OF COLUMN: 450\n");
+
+        delete intv5;
+        delete intv2;
+        delete intv9;
+        delete nullv;
+    }
+
+    SECTION("Maximum")
+    {
+        IntegerValue* intv5 = new IntegerValue(5);
+        IntegerValue* intv2 = new IntegerValue(2);
+        IntegerValue* intv9 = new IntegerValue(9);
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic, ic1(5), ic2;
+        ic.insert(intv5);
+        ic.insert(intv5);
+        ic.insert(intv2);
+        ic.insert(intv9);
+        ic.insert(nullv);
+
+        std::stringstream out, out1, out2;
+        ic.maximum(out);
+        ic1.maximum(out1);
+        ic2.maximum(out2);
+
+        REQUIRE(out.str() == "MAX: 9\n");
+        REQUIRE(out1.str() == "Column contains only NULL!\n");
+        REQUIRE(out2.str() == "EMPTY COLUMN - no MAX value!\n");
+
+        delete intv5;
+        delete intv2;
+        delete intv9;
+        delete nullv;
+    }
+
+    SECTION("Minumum")
+    {
+        IntegerValue* intv5 = new IntegerValue(5);
+        IntegerValue* intv2 = new IntegerValue(2);
+        IntegerValue* intv9 = new IntegerValue(9);
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic, ic1(5), ic2;
+        ic.insert(intv5);
+        ic.insert(intv5);
+        ic.insert(intv2);
+        ic.insert(intv9);
+        ic.insert(nullv);
+
+        std::stringstream out, out1, out2;
+        ic.minimum(out);
+        ic1.minimum(out1);
+        ic2.minimum(out2);
+
+        REQUIRE(out.str() == "MIN: 2\n");
+        REQUIRE(out1.str() == "Column contains only NULL!\n");
+        REQUIRE(out2.str() == "EMPTY COLUMN - no MIN value!\n");
+
+        delete intv5;
+        delete intv2;
+        delete intv9;
+        delete nullv;
     }
 }
