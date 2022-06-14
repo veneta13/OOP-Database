@@ -165,3 +165,55 @@ void Table::setFile(char const *_file) {
 char *Table::getFile() const {
     return file;
 }
+
+void Table::selectElement(int columnIndex, Value *value) {
+
+}
+
+void Table::deleteElement(int columnIndex, Value *value) {
+
+}
+
+void Table::insertRow(Value **values) {
+
+}
+
+void Table::updateElements(int columnIndex, Value *oldValue, Value *newValue) {
+
+}
+
+void Table::addColumn() {
+
+}
+
+int Table::countRows(int columnIndex, Value *value) {
+    return 0;
+}
+
+Table *Table::innerJoin(Table const &other) {
+    return nullptr;
+}
+
+void Table::showPage(std::ostream &out, int pageSize, int currentPage) {
+
+}
+
+void Table::sum(std::ostream &out, int columnIndex) {
+
+}
+
+void Table::product(std::ostream &out, int columnIndex) {
+
+}
+
+void Table::maximum(std::ostream &out, int columnIndex) {
+
+}
+
+void Table::minimum(std::ostream &out, int columnIndex) {
+
+}
+
+std::ostream &operator<<(std::ostream &out, Table const &table) {
+    return out;
+}
