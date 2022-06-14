@@ -12,8 +12,10 @@ public:
     NullValue &operator=(NullValue const &other);
     ~NullValue() override;
 
+    bool operator==(NullValue const& other);
+    bool operator!=(NullValue const& other);
+
     friend std::ostream& operator<<(std::ostream& out, NullValue const& nv);
 };
-
 
 #endif //STACK_NULL_VALUE_HPP

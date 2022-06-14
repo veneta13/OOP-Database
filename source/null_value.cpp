@@ -19,6 +19,22 @@ NullValue &NullValue::operator=(NullValue const &other) = default;
 NullValue::~NullValue() = default;
 
 
+/// Compare with equality operator
+/// \param other NullValue to compare to
+/// \return true
+bool NullValue::operator==(NullValue const &other) {
+    return true;
+}
+
+
+/// Compare with inequality operator
+/// \param other NullValue to compare to
+/// \return false
+bool NullValue::operator!=(NullValue const &other) {
+    return false;
+}
+
+
 /// Stream insertion operator
 /// \param out output stream
 /// \param sv NULL to output
