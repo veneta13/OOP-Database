@@ -3,6 +3,7 @@
 
 #include "../source/integer_column.hpp"
 #include "../source/float_column.hpp"
+#include "../source/string_column.hpp"
 
 TEST_CASE("Dynamic array tests")
 {
@@ -932,7 +933,6 @@ TEST_CASE("Integer column tests")
     }
 }
 
-
 TEST_CASE("Float column tests")
 {
     SECTION("Default constructor")
@@ -1358,6 +1358,387 @@ TEST_CASE("Float column tests")
         delete flov5;
         delete flov2;
         delete flov9;
+        delete nullv;
+    }
+}
+
+TEST_CASE("String column tests")
+{
+    SECTION("Default constructor")
+    {
+        NullValue* nullv = new NullValue();
+        StringColumn sc;
+
+        REQUIRE(sc.columnType() == ColumnType::String);
+        REQUIRE(sc.countValue(nullv) == 0);
+
+        delete nullv;
+    }
+
+    SECTION("Constructor with parameter")
+    {
+        NullValue* nullv = new NullValue();
+
+        StringColumn sc(2);
+
+        REQUIRE(sc.countValue(nullv) == 2);
+
+        delete nullv;
+    }
+
+    SECTION("Copy constructor")
+    {
+        StringValue* strv = new StringValue("dummy");
+        NullValue* nullv = new NullValue();
+
+        StringColumn sc;
+        sc.insert(strv);
+        sc.insert(nullv);
+        REQUIRE(sc.countValue(nullv) == 1);
+        REQUIRE(sc.countValue(strv) == 1);
+
+        StringColumn sc2(sc);
+        REQUIRE(sc2.countValue(nullv) == 1);
+        REQUIRE(sc2.countValue(strv) == 1);
+
+        delete strv;
+        delete nullv;
+    }
+
+    SECTION("Operator =")
+    {
+        StringValue* strv = new StringValue("dummy");
+        NullValue* nullv = new NullValue();
+
+        StringColumn sc;
+        sc.insert(strv);
+        sc.insert(nullv);
+        REQUIRE(sc.countValue(nullv) == 1);
+        REQUIRE(sc.countValue(strv) == 1);
+
+        StringColumn sc2 = sc;
+        REQUIRE(sc2.countValue(nullv) == 1);
+        REQUIRE(sc2.countValue(strv) == 1);
+
+        delete strv;
+        delete nullv;
+    }
+
+    SECTION("Operator []")
+    {
+        StringValue* strv5 = new StringValue("dummy");
+        StringValue* strv2 = new StringValue("dummy1");
+        StringValue* strv9 = new StringValue("dummy2");
+
+        StringColumn sc;
+        sc.insert(strv5);
+        sc.insert(strv5);
+        sc.insert(strv2);
+        sc.insert(strv9);
+
+        REQUIRE((*dynamic_cast<StringValue*>(sc[0])) == (*strv5));
+        REQUIRE((*dynamic_cast<StringValue*>(sc[1])) == (*strv5));
+        REQUIRE((*dynamic_cast<StringValue*>(sc[2])) == (*strv2));
+        REQUIRE((*dynamic_cast<StringValue*>(sc[3])) == (*strv9));
+
+        delete strv5;
+        delete strv2;
+        delete strv9;
+    }
+
+    SECTION("Insert")
+    {
+        StringValue* strv5 = new StringValue("dummy");
+        StringValue* strv2 = new StringValue("dummy1");
+        StringValue* strv9 = new StringValue("dummy2");
+        NullValue* nullv = new NullValue();
+
+        StringColumn sc;
+        sc.insert(strv5);
+        sc.insert(strv5);
+        sc.insert(strv2);
+        sc.insert(strv9);
+        sc.insert(nullv);
+
+        REQUIRE(sc.countValue(strv5) == 2);
+        REQUIRE(sc.countValue(strv2) == 1);
+        REQUIRE(sc.countValue(strv9) == 1);
+        REQUIRE(sc.countValue(nullv) == 1);
+
+        delete strv5;
+        delete strv2;
+        delete strv9;
+        delete nullv;
+    }
+
+    SECTION("Update")
+    {
+        StringValue* strv5 = new StringValue("dummy");
+        StringValue* strv2 = new StringValue("dummy1");
+        StringValue* strv9 = new StringValue("dummy2");
+        NullValue* nullv = new NullValue();
+
+        StringColumn sc;
+        sc.insert(strv5);
+        sc.insert(strv5);
+        sc.insert(strv2);
+
+        REQUIRE(sc.countValue(strv5) == 2);
+        REQUIRE(sc.countValue(strv2) == 1);
+        REQUIRE(sc.countValue(strv9) == 0);
+
+        sc.update(strv2, strv9);
+        REQUIRE(sc.countValue(strv5) == 2);
+        REQUIRE(sc.countValue(strv2) == 0);
+        REQUIRE(sc.countValue(strv9) == 1);
+
+        sc.update(strv9, strv5);
+        REQUIRE(sc.countValue(strv5) == 3);
+        REQUIRE(sc.countValue(strv2) == 0);
+        REQUIRE(sc.countValue(strv9) == 0);
+
+        sc.update(strv5, nullv);
+        REQUIRE(sc.countValue(strv5) == 0);
+        REQUIRE(sc.countValue(strv2) == 0);
+        REQUIRE(sc.countValue(strv9) == 0);
+        REQUIRE(sc.countValue(nullv) == 3);
+
+        delete strv5;
+        delete strv2;
+        delete strv9;
+        delete nullv;
+    }
+
+    SECTION("Delete by indexes")
+    {
+        DynamicArray<int> indexes;
+
+        StringValue* strv5 = new StringValue("dummy");
+        StringValue* strv2 = new StringValue("dummy1");
+        StringValue* strv9 = new StringValue("dummy2");
+        NullValue* nullv = new NullValue();
+
+        indexes.push_back(1);
+        indexes.push_back(2);
+
+        StringColumn sc;
+        sc.insert(strv5);
+        sc.insert(strv5);
+        sc.insert(strv2);
+        sc.insert(strv9);
+        sc.insert(nullv);
+
+        REQUIRE(sc.countValue(strv5) == 2);
+        REQUIRE(sc.countValue(strv2) == 1);
+        REQUIRE(sc.countValue(strv9) == 1);
+        REQUIRE(sc.countValue(nullv) == 1);
+
+        sc.deleteByIndexes(indexes);
+
+        REQUIRE(sc.countValue(strv5) == 1);
+        REQUIRE(sc.countValue(strv2) == 0);
+        REQUIRE(sc.countValue(strv9) == 1);
+        REQUIRE(sc.countValue(nullv) == 1);
+
+        sc.deleteByIndexes(indexes);
+
+        REQUIRE(sc.countValue(strv5) == 1);
+        REQUIRE(sc.countValue(strv2) == 0);
+        REQUIRE(sc.countValue(strv9) == 0);
+        REQUIRE(sc.countValue(nullv) == 0);
+
+        delete strv5;
+        delete strv2;
+        delete strv9;
+        delete nullv;
+    }
+
+    SECTION("Select")
+    {
+        DynamicArray<int> indexes;
+
+        StringValue* strv5 = new StringValue("dummy");
+        StringValue* strv2 = new StringValue("dummy1");
+        StringValue* strv9 = new StringValue("dummy2");
+        NullValue* nullv = new NullValue();
+
+        StringColumn sc;
+        sc.insert(strv5);
+        sc.insert(strv5);
+        sc.insert(strv2);
+        sc.insert(strv9);
+        sc.insert(nullv);
+
+        REQUIRE(sc.countValue(strv5) == 2);
+        REQUIRE(sc.countValue(strv2) == 1);
+        REQUIRE(sc.countValue(strv9) == 1);
+        REQUIRE(sc.countValue(nullv) == 1);
+
+        sc.select(strv5, indexes);
+        REQUIRE(indexes.size() == 2);
+        REQUIRE(indexes[0] == 0);
+        REQUIRE(indexes[1] == 1);
+
+        sc.select(strv9, indexes);
+        REQUIRE(indexes.size() == 3);
+        REQUIRE(indexes[0] == 0);
+        REQUIRE(indexes[1] == 1);
+        REQUIRE(indexes[2] == 3);
+
+        delete strv5;
+        delete strv2;
+        delete strv9;
+        delete nullv;
+    }
+
+    SECTION("Count")
+    {
+        DynamicArray<int> indexes;
+
+        StringValue* strv5 = new StringValue("dummy");
+        StringValue* strv2 = new StringValue("dummy1");
+        StringValue* strv9 = new StringValue("dummy2");
+        NullValue* nullv = new NullValue();
+
+        StringColumn sc;
+        sc.insert(strv5);
+        sc.insert(strv5);
+        sc.insert(strv2);
+        sc.insert(strv9);
+        sc.insert(nullv);
+
+        REQUIRE(sc.countValue(strv5) == 2);
+        REQUIRE(sc.countValue(strv2) == 1);
+        REQUIRE(sc.countValue(strv9) == 1);
+        REQUIRE(sc.countValue(nullv) == 1);
+
+        delete strv5;
+        delete strv2;
+        delete strv9;
+        delete nullv;
+    }
+
+    SECTION("Column type")
+    {
+        StringColumn sc;
+        REQUIRE(sc.columnType() == ColumnType::String);
+    }
+
+    SECTION("Size")
+    {
+        StringValue* strv5 = new StringValue("dummy");
+        StringValue* strv2 = new StringValue("dummy1");
+        StringValue* strv9 = new StringValue("dummy2");
+        NullValue* nullv = new NullValue();
+
+        StringColumn sc, fc2(7);
+        sc.insert(strv5);
+        sc.insert(strv5);
+        sc.insert(strv2);
+        sc.insert(strv9);
+        sc.insert(nullv);
+
+        std::stringstream out;
+
+        REQUIRE(sc.size() == 5);
+        REQUIRE(fc2.size() == 7);
+
+        delete strv5;
+        delete strv2;
+        delete strv9;
+        delete nullv;
+    }
+
+    SECTION("Sum")
+    {
+        StringValue* strv5 = new StringValue("dummy");
+
+        StringColumn sc;
+        sc.insert(strv5);
+
+        std::stringstream out;
+        sc.sum(out);
+
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+
+        delete strv5;
+    }
+
+    SECTION("Product")
+    {
+        StringValue* strv5 = new StringValue("dummy");
+
+        StringColumn sc;
+        sc.insert(strv5);
+
+        std::stringstream out;
+        sc.product(out);
+
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+
+        delete strv5;
+    }
+
+    SECTION("Maximum")
+    {
+        StringValue* strv5 = new StringValue("dummy");
+
+        StringColumn sc;
+        sc.insert(strv5);
+
+        std::stringstream out;
+        sc.maximum(out);
+
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+
+        delete strv5;
+    }
+
+    SECTION("Minumum")
+    {
+        StringValue* strv5 = new StringValue("dummy");
+
+        StringColumn sc;
+        sc.insert(strv5);
+
+        std::stringstream out;
+        sc.minimum(out);
+
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+
+        delete strv5;
+    }
+
+    SECTION("Print")
+    {
+        StringValue* strv5 = new StringValue("dummy");
+        StringValue* strv2 = new StringValue("dummy1");
+        StringValue* strv9 = new StringValue("dummy2");
+        NullValue* nullv = new NullValue();
+
+        StringColumn sc, fc1(5);
+        sc.insert(strv5);
+        sc.insert(strv5);
+        sc.insert(strv2);
+        sc.insert(strv9);
+        sc.insert(nullv);
+
+        std::stringstream out, out2;
+
+        for (int i = 0; i < sc.size(); i++) {
+            sc.print(out, i, 8);
+        }
+
+        for (int i = 0; i < fc1.size(); i++) {
+            fc1.print(out2, i, 8);
+        }
+
+        REQUIRE(out.str() == "   dummy   dummy  dummy1  dummy2    NULL");
+        REQUIRE(out2.str() == "    NULL    NULL    NULL    NULL    NULL");
+
+        delete strv5;
+        delete strv2;
+        delete strv9;
         delete nullv;
     }
 }
