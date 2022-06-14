@@ -4,7 +4,7 @@
 
 #include "table_column.hpp"
 
-
+/// Represents a column of integers
 class IntegerColumn : public TableColumn {
 
     /// Number of rows currently in the column
