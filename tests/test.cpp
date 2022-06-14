@@ -2,8 +2,7 @@
 #include "catch.hpp"
 
 #include "../source/integer_column.hpp"
-
-#include <typeinfo>
+#include "../source/float_column.hpp"
 
 TEST_CASE("Dynamic array tests")
 {
@@ -540,8 +539,8 @@ TEST_CASE("Integer column tests")
         REQUIRE(ic.countValue(intv) == 1);
 
         IntegerColumn ic2(ic);
-        REQUIRE(ic.countValue(nullv) == 1);
-        REQUIRE(ic.countValue(intv) == 1);
+        REQUIRE(ic2.countValue(nullv) == 1);
+        REQUIRE(ic2.countValue(intv) == 1);
 
         delete intv;
         delete nullv;
@@ -559,8 +558,8 @@ TEST_CASE("Integer column tests")
         REQUIRE(ic.countValue(intv) == 1);
 
         IntegerColumn ic2 = ic;
-        REQUIRE(ic.countValue(nullv) == 1);
-        REQUIRE(ic.countValue(intv) == 1);
+        REQUIRE(ic2.countValue(nullv) == 1);
+        REQUIRE(ic2.countValue(intv) == 1);
 
         delete intv;
         delete nullv;
@@ -871,6 +870,378 @@ TEST_CASE("Integer column tests")
         delete intv5;
         delete intv2;
         delete intv9;
+        delete nullv;
+    }
+}
+
+
+TEST_CASE("Float column tests")
+{
+    SECTION("Default constructor")
+    {
+        NullValue* nullv = new NullValue();
+        FloatColumn fc;
+
+        REQUIRE(fc.columnType() == ColumnType::FloatingPoint);
+        REQUIRE(fc.countValue(nullv) == 0);
+
+        delete nullv;
+    }
+
+    SECTION("Constructor with parameter")
+    {
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc(2);
+
+        REQUIRE(fc.countValue(nullv) == 2);
+
+        delete nullv;
+    }
+
+    SECTION("Copy constructor")
+    {
+        FloatValue* flov = new FloatValue(5.12);
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc;
+        fc.insert(flov);
+        fc.insert(nullv);
+        REQUIRE(fc.countValue(nullv) == 1);
+        REQUIRE(fc.countValue(flov) == 1);
+
+        FloatColumn fc2(fc);
+        REQUIRE(fc2.countValue(nullv) == 1);
+        REQUIRE(fc2.countValue(flov) == 1);
+
+        delete flov;
+        delete nullv;
+    }
+
+    SECTION("Operator =")
+    {
+        FloatValue* flov = new FloatValue(5.15);
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc;
+        fc.insert(flov);
+        fc.insert(nullv);
+        REQUIRE(fc.countValue(nullv) == 1);
+        REQUIRE(fc.countValue(flov) == 1);
+
+        FloatColumn fc2 = fc;
+        REQUIRE(fc2.countValue(nullv) == 1);
+        REQUIRE(fc2.countValue(flov) == 1);
+
+        delete flov;
+        delete nullv;
+    }
+
+    SECTION("Operator []")
+    {
+        FloatValue* flov5 = new FloatValue(5.5);
+        FloatValue* flov2 = new FloatValue(2.2);
+        FloatValue* flov9 = new FloatValue(9.9);
+
+        FloatColumn fc;
+        fc.insert(flov5);
+        fc.insert(flov5);
+        fc.insert(flov2);
+        fc.insert(flov9);
+
+        REQUIRE((*dynamic_cast<FloatValue*>(fc[0])) == (*flov5));
+        REQUIRE((*dynamic_cast<FloatValue*>(fc[1])) == (*flov5));
+        REQUIRE((*dynamic_cast<FloatValue*>(fc[2])) == (*flov2));
+        REQUIRE((*dynamic_cast<FloatValue*>(fc[3])) == (*flov9));
+
+        delete flov5;
+        delete flov2;
+        delete flov9;
+    }
+
+    SECTION("Insert")
+    {
+        FloatValue* flov5 = new FloatValue(5.5);
+        FloatValue* flov2 = new FloatValue(2.2);
+        FloatValue* flov9 = new FloatValue(9.9);
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc;
+        fc.insert(flov5);
+        fc.insert(flov5);
+        fc.insert(flov2);
+        fc.insert(flov9);
+        fc.insert(nullv);
+
+        REQUIRE(fc.countValue(flov5) == 2);
+        REQUIRE(fc.countValue(flov2) == 1);
+        REQUIRE(fc.countValue(flov9) == 1);
+        REQUIRE(fc.countValue(nullv) == 1);
+
+        delete flov5;
+        delete flov2;
+        delete flov9;
+        delete nullv;
+    }
+
+    SECTION("Update")
+    {
+        FloatValue* flov5 = new FloatValue(5.5);
+        FloatValue* flov2 = new FloatValue(2.2);
+        FloatValue* flov9 = new FloatValue(9.9);
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc;
+        fc.insert(flov5);
+        fc.insert(flov5);
+        fc.insert(flov2);
+
+        REQUIRE(fc.countValue(flov5) == 2);
+        REQUIRE(fc.countValue(flov2) == 1);
+        REQUIRE(fc.countValue(flov9) == 0);
+
+        fc.update(flov2, flov9);
+        REQUIRE(fc.countValue(flov5) == 2);
+        REQUIRE(fc.countValue(flov2) == 0);
+        REQUIRE(fc.countValue(flov9) == 1);
+
+        fc.update(flov9, flov5);
+        REQUIRE(fc.countValue(flov5) == 3);
+        REQUIRE(fc.countValue(flov2) == 0);
+        REQUIRE(fc.countValue(flov9) == 0);
+
+        fc.update(flov5, nullv);
+        REQUIRE(fc.countValue(flov5) == 0);
+        REQUIRE(fc.countValue(flov2) == 0);
+        REQUIRE(fc.countValue(flov9) == 0);
+        REQUIRE(fc.countValue(nullv) == 3);
+
+        delete flov5;
+        delete flov2;
+        delete flov9;
+        delete nullv;
+    }
+
+    SECTION("Delete by indexes")
+    {
+        DynamicArray<int> indexes;
+
+        FloatValue* flov5 = new FloatValue(5.5);
+        FloatValue* flov2 = new FloatValue(2.2);
+        FloatValue* flov9 = new FloatValue(9.9);
+        NullValue* nullv = new NullValue();
+
+        indexes.push_back(1);
+        indexes.push_back(2);
+
+        FloatColumn fc;
+        fc.insert(flov5);
+        fc.insert(flov5);
+        fc.insert(flov2);
+        fc.insert(flov9);
+        fc.insert(nullv);
+
+        REQUIRE(fc.countValue(flov5) == 2);
+        REQUIRE(fc.countValue(flov2) == 1);
+        REQUIRE(fc.countValue(flov9) == 1);
+        REQUIRE(fc.countValue(nullv) == 1);
+
+        fc.deleteByIndexes(indexes);
+
+        REQUIRE(fc.countValue(flov5) == 1);
+        REQUIRE(fc.countValue(flov2) == 0);
+        REQUIRE(fc.countValue(flov9) == 1);
+        REQUIRE(fc.countValue(nullv) == 1);
+
+        fc.deleteByIndexes(indexes);
+
+        REQUIRE(fc.countValue(flov5) == 1);
+        REQUIRE(fc.countValue(flov2) == 0);
+        REQUIRE(fc.countValue(flov9) == 0);
+        REQUIRE(fc.countValue(nullv) == 0);
+
+        delete flov5;
+        delete flov2;
+        delete flov9;
+        delete nullv;
+    }
+
+    SECTION("Select")
+    {
+        DynamicArray<int> indexes;
+
+        FloatValue* flov5 = new FloatValue(5.5);
+        FloatValue* flov2 = new FloatValue(2.2);
+        FloatValue* flov9 = new FloatValue(9.9);
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc;
+        fc.insert(flov5);
+        fc.insert(flov5);
+        fc.insert(flov2);
+        fc.insert(flov9);
+        fc.insert(nullv);
+
+        REQUIRE(fc.countValue(flov5) == 2);
+        REQUIRE(fc.countValue(flov2) == 1);
+        REQUIRE(fc.countValue(flov9) == 1);
+        REQUIRE(fc.countValue(nullv) == 1);
+
+        fc.select(flov5, indexes);
+        REQUIRE(indexes.size() == 2);
+        REQUIRE(indexes[0] == 0);
+        REQUIRE(indexes[1] == 1);
+
+        fc.select(flov9, indexes);
+        REQUIRE(indexes.size() == 3);
+        REQUIRE(indexes[0] == 0);
+        REQUIRE(indexes[1] == 1);
+        REQUIRE(indexes[2] == 3);
+
+        delete flov5;
+        delete flov2;
+        delete flov9;
+        delete nullv;
+    }
+
+    SECTION("Count")
+    {
+        DynamicArray<int> indexes;
+
+        FloatValue* flov5 = new FloatValue(5.5);
+        FloatValue* flov2 = new FloatValue(2.2);
+        FloatValue* flov9 = new FloatValue(9.9);
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc;
+        fc.insert(flov5);
+        fc.insert(flov5);
+        fc.insert(flov2);
+        fc.insert(flov9);
+        fc.insert(nullv);
+
+        REQUIRE(fc.countValue(flov5) == 2);
+        REQUIRE(fc.countValue(flov2) == 1);
+        REQUIRE(fc.countValue(flov9) == 1);
+        REQUIRE(fc.countValue(nullv) == 1);
+
+        delete flov5;
+        delete flov2;
+        delete flov9;
+        delete nullv;
+    }
+
+    SECTION("Column type")
+    {
+        IntegerColumn ic;
+        REQUIRE(ic.columnType() == ColumnType::Integer);
+    }
+
+    SECTION("Sum")
+    {
+        FloatValue* flov5 = new FloatValue(5.5);
+        FloatValue* flov2 = new FloatValue(2.2);
+        FloatValue* flov9 = new FloatValue(9.9);
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc;
+        fc.insert(flov5);
+        fc.insert(flov5);
+        fc.insert(flov2);
+        fc.insert(flov9);
+        fc.insert(nullv);
+
+        std::stringstream out;
+        fc.sum(out);
+
+        REQUIRE(out.str() == "SUM OF COLUMN: 23.1\n");
+
+        delete flov5;
+        delete flov2;
+        delete flov9;
+        delete nullv;
+    }
+
+    SECTION("Product")
+    {
+        FloatValue* flov5 = new FloatValue(5.5);
+        FloatValue* flov2 = new FloatValue(2.2);
+        FloatValue* flov9 = new FloatValue(9.9);
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc;
+        fc.insert(flov5);
+        fc.insert(flov5);
+        fc.insert(flov2);
+        fc.insert(flov9);
+        fc.insert(nullv);
+
+        std::stringstream out;
+        fc.product(out);
+
+        REQUIRE(out.str() == "PRODUCT OF COLUMN: 658.845\n");
+
+        delete flov5;
+        delete flov2;
+        delete flov9;
+        delete nullv;
+    }
+
+    SECTION("Maximum")
+    {
+        FloatValue* flov5 = new FloatValue(5.5);
+        FloatValue* flov2 = new FloatValue(2.2);
+        FloatValue* flov9 = new FloatValue(9.9);
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc, fc1(5), fc2;
+        fc.insert(flov5);
+        fc.insert(flov5);
+        fc.insert(flov2);
+        fc.insert(flov9);
+        fc.insert(nullv);
+
+        std::stringstream out, out1, out2;
+        fc.maximum(out);
+        fc1.maximum(out1);
+        fc2.maximum(out2);
+
+        REQUIRE(out.str() == "MAX: 9.9\n");
+        REQUIRE(out1.str() == "Column contains only NULL!\n");
+        REQUIRE(out2.str() == "EMPTY COLUMN - no MAX value!\n");
+
+        delete flov5;
+        delete flov2;
+        delete flov9;
+        delete nullv;
+    }
+
+    SECTION("Minumum")
+    {
+        FloatValue* flov5 = new FloatValue(5.5);
+        FloatValue* flov2 = new FloatValue(2.2);
+        FloatValue* flov9 = new FloatValue(9.9);;
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc, fc1(5), fc2;
+        fc.insert(flov5);
+        fc.insert(flov5);
+        fc.insert(flov2);
+        fc.insert(flov9);
+        fc.insert(nullv);
+
+        std::stringstream out, out1, out2;
+        fc.minimum(out);
+        fc1.minimum(out1);
+        fc2.minimum(out2);
+
+        REQUIRE(out.str() == "MIN: 2.2\n");
+        REQUIRE(out1.str() == "Column contains only NULL!\n");
+        REQUIRE(out2.str() == "EMPTY COLUMN - no MIN value!\n");
+
+        delete flov5;
+        delete flov2;
+        delete flov9;
         delete nullv;
     }
 }
