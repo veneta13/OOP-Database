@@ -38,6 +38,7 @@ public:
     int countValue(Value* value) override;
 
     ColumnType columnType() override;
+    int size() const override;
 
     void sum(std::ostream& out) override;
     void product(std::ostream& out) override;

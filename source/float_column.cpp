@@ -188,6 +188,11 @@ ColumnType FloatColumn::columnType() {
 }
 
 
+int FloatColumn::size() const {
+    return count;
+}
+
+
 void FloatColumn::sum(std::ostream& out) {
     double sum = 0;
     for (int i = 0; i < count; i++) {

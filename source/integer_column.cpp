@@ -188,6 +188,11 @@ ColumnType IntegerColumn::columnType() {
 }
 
 
+int IntegerColumn::size() const {
+    return count;
+}
+
+
 void IntegerColumn::sum(std::ostream& out) {
     int sum = 0;
     for (int i = 0; i < count; i++) {

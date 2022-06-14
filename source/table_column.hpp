@@ -20,6 +20,10 @@ enum ColumnType {
 class TableColumn {
 public:
 
+    /// Getter for column size
+    /// \return count of rows in column
+    virtual int size() const = 0;
+
     /// Getter for column value
     /// \param index index to get from
     /// \return the value of the row

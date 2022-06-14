@@ -40,6 +40,7 @@ public:
     void select(Value* value, DynamicArray<int>& indexes) const override;
 
     int countValue(Value* value) override;
+    int size() const override;
 
     ColumnType columnType() override;
 

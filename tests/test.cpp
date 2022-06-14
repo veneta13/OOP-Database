@@ -765,6 +765,31 @@ TEST_CASE("Integer column tests")
         REQUIRE(ic.columnType() == ColumnType::Integer);
     }
 
+    SECTION("Size")
+    {
+        IntegerValue* intv5 = new IntegerValue(5);
+        IntegerValue* intv2 = new IntegerValue(2);
+        IntegerValue* intv9 = new IntegerValue(9);
+        NullValue* nullv = new NullValue();
+
+        IntegerColumn ic, ic2(7);
+        ic.insert(intv5);
+        ic.insert(intv5);
+        ic.insert(intv2);
+        ic.insert(intv9);
+        ic.insert(nullv);
+
+        std::stringstream out;
+
+        REQUIRE(ic.size() == 5);
+        REQUIRE(ic2.size() == 7);
+
+        delete intv5;
+        delete intv2;
+        delete intv9;
+        delete nullv;
+    }
+
     SECTION("Sum")
     {
         IntegerValue* intv5 = new IntegerValue(5);
@@ -1133,8 +1158,33 @@ TEST_CASE("Float column tests")
 
     SECTION("Column type")
     {
-        IntegerColumn ic;
-        REQUIRE(ic.columnType() == ColumnType::Integer);
+        FloatColumn fc;
+        REQUIRE(fc.columnType() == ColumnType::FloatingPoint);
+    }
+
+    SECTION("Size")
+    {
+        FloatValue* flov5 = new FloatValue(5.5);
+        FloatValue* flov2 = new FloatValue(2.2);
+        FloatValue* flov9 = new FloatValue(9.9);
+        NullValue* nullv = new NullValue();
+
+        FloatColumn fc, fc2(7);
+        fc.insert(flov5);
+        fc.insert(flov5);
+        fc.insert(flov2);
+        fc.insert(flov9);
+        fc.insert(nullv);
+
+        std::stringstream out;
+
+        REQUIRE(fc.size() == 5);
+        REQUIRE(fc2.size() == 7);
+
+        delete flov5;
+        delete flov2;
+        delete flov9;
+        delete nullv;
     }
 
     SECTION("Sum")
