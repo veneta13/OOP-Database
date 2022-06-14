@@ -19,6 +19,11 @@ enum ColumnType {
 class TableColumn {
 public:
 
+    /// Getter for column value
+    /// \param index index to get from
+    /// \return the value of the row
+    virtual Value* operator[](int index) = 0;
+
     /// Update the values
     /// \param oldValue value to update
     /// \param newValue new value
