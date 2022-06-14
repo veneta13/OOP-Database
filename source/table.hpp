@@ -28,6 +28,7 @@ class Table {
     void clear();
     void expand();
     void copy(Table const& other);
+    void checkIndex(int columnIndex) const;
 
 public:
     Table();
@@ -43,23 +44,24 @@ public:
     void setFile(char const* _file);
     char* getFile() const;
 
-    void selectElement(int columnIndex, Value* value);
-    void deleteElement(int columnIndex, Value* value);
+    void addColumn(ColumnType type);
     void insertRow(Value** values);
+
+    void selectElement(int columnIndex, DynamicArray<int>& indexes, Value* value) const;
+    void deleteElement(int columnIndex, Value* value);
     void updateElements(int columnIndex, Value* oldValue, Value* newValue);
 
-    void addColumn();
+    int countRows(int columnIndex, Value* value) const;
 
-    int countRows(int columnIndex, Value* value);
+    Table* innerJoin(Table const& other) const;
 
-    Table* innerJoin(Table const& other);
+    void showPage(std::ostream& out, int pageSize, int currentPage) const;
+    void showPage(std::ostream& out, DynamicArray<int> &indexes) const;
 
-    void showPage(std::ostream& out, int pageSize, int currentPage);
-
-    void sum(std::ostream& out, int columnIndex);
-    void product(std::ostream& out, int columnIndex);
-    void maximum(std::ostream& out, int columnIndex);
-    void minimum(std::ostream& out, int columnIndex);
+    void sum(std::ostream& out, int columnIndex) const;
+    void product(std::ostream& out, int columnIndex) const;
+    void maximum(std::ostream& out, int columnIndex) const;
+    void minimum(std::ostream& out, int columnIndex) const;
 
     friend std::ostream& operator<<(std::ostream& out, Table const& table);
 };

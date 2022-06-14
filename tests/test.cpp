@@ -1,9 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include "../source/integer_column.hpp"
-#include "../source/float_column.hpp"
-#include "../source/string_column.hpp"
+#include "../source/table.hpp"
 
 TEST_CASE("Dynamic array tests")
 {
@@ -1740,5 +1738,285 @@ TEST_CASE("String column tests")
         delete strv2;
         delete strv9;
         delete nullv;
+    }
+}
+
+TEST_CASE("Table tests")
+{
+    SECTION("Default constructor")
+    {
+        Table table;
+        REQUIRE(table.getName() == nullptr);
+        REQUIRE(table.getFile() == nullptr);
+    }
+
+    SECTION("Constructor with name")
+    {
+        Table table("dummy table");
+        REQUIRE(strcmp(table.getName(), "dummy table") == 0);
+        REQUIRE(table.getFile() == nullptr);
+    }
+
+    SECTION("Constructor with name and file")
+    {
+        Table table("dummy table", "file.txt");
+        REQUIRE(strcmp(table.getName(), "dummy table") == 0);
+        REQUIRE(strcmp(table.getFile(), "file.txt") == 0);
+    }
+
+    SECTION("Copy constructor")
+    {
+        Table table("dummy table", "file.txt");
+        REQUIRE(strcmp(table.getName(), "dummy table") == 0);
+        REQUIRE(strcmp(table.getFile(), "file.txt") == 0);
+
+        Table table1(table);
+        REQUIRE(strcmp(table1.getName(), "dummy table") == 0);
+        REQUIRE(strcmp(table1.getFile(), "file.txt") == 0);
+    }
+
+    SECTION("Operator =")
+    {
+        Table table("dummy table", "file.txt");
+        REQUIRE(strcmp(table.getName(), "dummy table") == 0);
+        REQUIRE(strcmp(table.getFile(), "file.txt") == 0);
+
+        Table table1 = table;
+        REQUIRE(strcmp(table1.getName(), "dummy table") == 0);
+        REQUIRE(strcmp(table1.getFile(), "file.txt") == 0);
+    }
+
+    SECTION("Getter and setter for name")
+    {
+        Table table;
+        REQUIRE(table.getName() == nullptr);
+        REQUIRE(table.getFile() == nullptr);
+
+        table.setName("dummy");
+        REQUIRE(strcmp(table.getName(), "dummy") == 0);
+        REQUIRE(table.getFile() == nullptr);
+
+        table.setName("dummy1");
+        REQUIRE(strcmp(table.getName(), "dummy1") == 0);
+        REQUIRE(table.getFile() == nullptr);
+    }
+
+    SECTION("Getter and setter for file")
+    {
+        Table table;
+        REQUIRE(table.getName() == nullptr);
+        REQUIRE(table.getFile() == nullptr);
+
+        table.setFile("dummy.txt");
+        REQUIRE(table.getName() == nullptr);
+        REQUIRE(strcmp(table.getFile(), "dummy.txt") == 0);
+
+        table.setFile("dummy1.txt");
+        REQUIRE(table.getName() == nullptr);
+        REQUIRE(strcmp(table.getFile(), "dummy1.txt") == 0);
+    }
+
+    SECTION("Insert column")
+    {
+        Table table("dummy table", "file.txt");
+        REQUIRE(strcmp(table.getName(), "dummy table") == 0);
+        REQUIRE(strcmp(table.getFile(), "file.txt") == 0);
+
+        table.addColumn(ColumnType::Integer);
+        table.addColumn(ColumnType::Integer);
+        table.addColumn(ColumnType::FloatingPoint);
+        table.addColumn(ColumnType::String);
+
+        std::stringstream out;
+        out << table;
+
+        REQUIRE(out.str() == "dummy table\n4 0 1 1 2 3\n");
+    }
+
+    SECTION("Insert row")
+    {
+        IntegerValue *intv = new IntegerValue(5);
+        NullValue *nullv = new NullValue();
+
+        Table table("dummy table", "file.txt");
+        REQUIRE(strcmp(table.getName(), "dummy table") == 0);
+        REQUIRE(strcmp(table.getFile(), "file.txt") == 0);
+
+        Value **values = new Value *[1];
+        values[0] = intv;
+
+        table.addColumn(ColumnType::Integer);
+        table.insertRow(values);
+
+        std::stringstream out;
+        out << table;
+
+        REQUIRE(out.str() == "dummy table\n1 1 1\n5\n");
+
+        delete intv;
+        delete nullv;
+        delete[] values;
+    }
+
+    SECTION("Select")
+    {
+        DynamicArray<int> indexes;
+
+        IntegerValue *intv1 = new IntegerValue(5);
+        IntegerValue *intv2 = new IntegerValue(6);
+        StringValue *strv = new StringValue("string dummy");
+
+        Table table("dummy table", "file.txt");
+        REQUIRE(strcmp(table.getName(), "dummy table") == 0);
+        REQUIRE(strcmp(table.getFile(), "file.txt") == 0);
+
+        Value **values1 = new Value *[2];
+        values1[0] = intv1;
+        values1[1] = strv;
+        Value **values2 = new Value *[2];
+        values2[0] = intv2;
+        values2[1] = strv;
+
+        table.addColumn(ColumnType::Integer);
+        table.addColumn(ColumnType::String);
+        table.insertRow(values1);
+        table.insertRow(values2);
+
+        table.selectElement(0, indexes, intv1);
+        REQUIRE(indexes.size() == 1);
+        REQUIRE(indexes[0] == 0);
+
+        table.selectElement(0, indexes, intv2);
+        REQUIRE(indexes.size() == 2);
+        REQUIRE(indexes[1] == 1);
+
+        table.selectElement(1, indexes, strv);
+        REQUIRE(indexes.size() == 4);
+        REQUIRE(indexes[2] == 0);
+        REQUIRE(indexes[3] == 1);
+
+        delete intv1;
+        delete intv2;
+        delete strv;
+        delete[] values1;
+        delete[] values2;
+    }
+
+    SECTION("Delete")
+    {
+        DynamicArray<int> indexes;
+
+        IntegerValue *intv1 = new IntegerValue(5);
+        IntegerValue *intv2 = new IntegerValue(6);
+        StringValue *strv = new StringValue("string dummy");
+
+        Table table("dummy table", "file.txt");
+        REQUIRE(strcmp(table.getName(), "dummy table") == 0);
+        REQUIRE(strcmp(table.getFile(), "file.txt") == 0);
+
+        Value **values1 = new Value *[2];
+        values1[0] = intv1;
+        values1[1] = strv;
+        Value **values2 = new Value *[2];
+        values2[0] = intv2;
+        values2[1] = strv;
+
+        table.addColumn(ColumnType::Integer);
+        table.addColumn(ColumnType::String);
+        table.insertRow(values1);
+        table.insertRow(values2);
+
+        Table table2(table);
+
+        table.selectElement(0, indexes, intv1);
+        REQUIRE(indexes.size() == 1);
+        REQUIRE(indexes[0] == 0);
+        table.deleteElement(0, intv1);
+        table.selectElement(0, indexes, intv1);
+        REQUIRE(indexes.size() == 1);
+        REQUIRE(indexes[0] == 0);
+
+        table.selectElement(0, indexes, intv2);
+        REQUIRE(indexes.size() == 2);
+        REQUIRE(indexes[1] == 0);
+        table.deleteElement(0, intv2);
+        table.selectElement(0, indexes, intv2);
+        REQUIRE(indexes.size() == 2);
+        REQUIRE(indexes[1] == 0);
+
+        table2.selectElement(1, indexes, strv);
+        REQUIRE(indexes.size() == 4);
+        REQUIRE(indexes[2] == 0);
+        REQUIRE(indexes[3] == 1);
+        table2.deleteElement(1, strv);
+        table2.selectElement(1, indexes, strv);
+        REQUIRE(indexes.size() == 4);
+        REQUIRE(indexes[2] == 0);
+        REQUIRE(indexes[3] == 1);
+
+        delete intv1;
+        delete intv2;
+        delete strv;
+        delete[] values1;
+        delete[] values2;
+    }
+
+    SECTION("Update")
+    {
+        DynamicArray<int> indexes;
+
+        IntegerValue *intv1 = new IntegerValue(5);
+        IntegerValue *intv2 = new IntegerValue(6);
+        StringValue *strv = new StringValue("string dummy");
+        NullValue *nullv = new NullValue();
+
+        Table table("dummy table", "file.txt");
+        REQUIRE(strcmp(table.getName(), "dummy table") == 0);
+        REQUIRE(strcmp(table.getFile(), "file.txt") == 0);
+
+        Value **values1 = new Value *[2];
+        values1[0] = intv1;
+        values1[1] = strv;
+        Value **values2 = new Value *[2];
+        values2[0] = intv2;
+        values2[1] = strv;
+
+        table.addColumn(ColumnType::Integer);
+        table.addColumn(ColumnType::String);
+        table.insertRow(values1);
+        table.insertRow(values2);
+
+        table.selectElement(0, indexes, intv1);
+        REQUIRE(indexes.size() == 1);
+        REQUIRE(indexes[0] == 0);
+
+        table.updateElements(0, intv1, intv2);
+        table.selectElement(0, indexes, intv1);
+        REQUIRE(indexes.size() == 1);
+        REQUIRE(indexes[0] == 0);
+        table.selectElement(0, indexes, intv2);
+        REQUIRE(indexes.size() == 3);
+        REQUIRE(indexes[1] == 0);
+        REQUIRE(indexes[2] == 1);
+
+        table.updateElements(1, strv, nullv);
+        table.selectElement(1, indexes, strv);
+        REQUIRE(indexes.size() == 3);
+        table.selectElement(1, indexes, nullv);
+        REQUIRE(indexes.size() == 5);
+        REQUIRE(indexes[3] == 0);
+        REQUIRE(indexes[4] == 1);
+
+        delete intv1;
+        delete intv2;
+        delete strv;
+        delete nullv;
+        delete[] values1;
+        delete[] values2;
+    }
+
+    SECTION("Count")
+    {
+
     }
 }

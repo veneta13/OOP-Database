@@ -73,8 +73,10 @@ Table::~Table() {
 
 /// Clear table
 void Table::clear() {
-    for (int i = 0; i < columnCount; i++) {
-        delete columns[i];
+    if (columns) {
+        for (int i = 0; i < columnCount; i++) {
+            delete columns[i];
+        }
     }
 
     delete[] columns;
@@ -119,7 +121,7 @@ void Table::copy(Table const &other) {
     file = new char[strlen(other.file) + 1];
     strcpy(file, other.file);
 
-    columns = new TableColumn*[columnCount];
+    columns = new TableColumn*[capacity];
 
     for (int i = 0; i < columnCount; i++) {
         if (typeid(*other.columns[i]) == typeid(IntegerColumn&)) {
@@ -131,6 +133,15 @@ void Table::copy(Table const &other) {
         else {
             columns[i] = new StringColumn(dynamic_cast<StringColumn&>(*other.columns[i]));
         }
+    }
+}
+
+
+/// Check if column exists in the table
+/// \param columnIndex index of the column
+void Table::checkIndex(int columnIndex) const {
+    if (columnIndex < 0 || columnIndex >= columnCount) {
+        throw std::invalid_argument("Column with such index does not exist");
     }
 }
 
@@ -166,54 +177,157 @@ char *Table::getFile() const {
     return file;
 }
 
-void Table::selectElement(int columnIndex, Value *value) {
 
+/// Add new empty column to the table
+/// \param type type of the column
+void Table::addColumn(ColumnType type) {
+    if (capacity == columnCount) { expand(); }
+
+    if (type == ColumnType::Integer) {
+        columns[columnCount] = new IntegerColumn(rowCount);
+    }
+    else if (type == ColumnType::FloatingPoint) {
+        columns[columnCount] = new FloatColumn(rowCount);
+    }
+    else {
+        columns[columnCount] = new StringColumn(rowCount);
+    }
+    columnCount++;
 }
 
+
+/// Insert a new row into the table
+/// \param values values of the columns in the row
+void Table::insertRow(Value** values) {
+    for (int i = 0; i < columnCount; i++) {
+        columns[i]->insert(values[i]);
+    }
+    rowCount++;
+}
+
+
+/// Find all rows containing the value in a certain column
+/// \param columnIndex column to search in
+/// \param indexes storage for the indexes
+/// \param value value to search for
+void Table::selectElement(int columnIndex, DynamicArray<int>& indexes,  Value *value) const {
+    checkIndex(columnIndex);
+    columns[columnIndex]->select(value, indexes);
+}
+
+
+/// Delete all rows containing a value in a specific column
+/// \param columnIndex index of the column
+/// \param value value to search for
 void Table::deleteElement(int columnIndex, Value *value) {
-
+    checkIndex(columnIndex);
+    DynamicArray<int> indexes;
+    selectElement(columnIndex, indexes, value);
+    for (int i = 0; i < columnCount; i++) {
+        columns[i]->deleteByIndexes(indexes);
+    }
 }
 
-void Table::insertRow(Value **values) {
 
-}
-
+/// Update table column values
+/// \param columnIndex index of the column to update
+/// \param oldValue value to update
+/// \param newValue new value
 void Table::updateElements(int columnIndex, Value *oldValue, Value *newValue) {
-
+    checkIndex(columnIndex);
+    columns[columnIndex]->update(oldValue, newValue);
 }
 
-void Table::addColumn() {
 
+/// Count rows containing a value in column
+/// \param columnIndex column to search in
+/// \param value value to search for
+/// \return number of columns
+int Table::countRows(int columnIndex, Value *value) const {
+    checkIndex(columnIndex);
+    return columns[columnIndex]->countValue(value);
 }
 
-int Table::countRows(int columnIndex, Value *value) {
-    return 0;
-}
 
-Table *Table::innerJoin(Table const &other) {
+/// Perform inner join
+/// \param other table to join with
+/// \return table - result of the join
+Table *Table::innerJoin(Table const &other) const {
     return nullptr;
 }
 
-void Table::showPage(std::ostream &out, int pageSize, int currentPage) {
+
+/// Output a page
+/// \param out stream to insert in
+/// \param pageSize number of rows on a page
+/// \param currentPage page currently displayed
+void Table::showPage(std::ostream &out, int pageSize, int currentPage) const {
 
 }
 
-void Table::sum(std::ostream &out, int columnIndex) {
+
+/// Output a page
+/// \param out stream to insert in
+/// \param indexes rows to show
+void Table::showPage(std::ostream &out, DynamicArray<int> &indexes) const {
 
 }
 
-void Table::product(std::ostream &out, int columnIndex) {
-
+/// Print the sum of the column
+/// \param out stream to input answer into
+/// \param columnIndex index of the column to calculate
+void Table::sum(std::ostream &out, int columnIndex) const {
+    checkIndex(columnIndex);
+    columns[columnIndex]->sum(out);
 }
 
-void Table::maximum(std::ostream &out, int columnIndex) {
 
+/// Print the product of the column
+/// \param out stream to input answer into
+/// \param columnIndex index of the column to calculate
+void Table::product(std::ostream &out, int columnIndex) const {
+    checkIndex(columnIndex);
+    columns[columnIndex]->product(out);
 }
 
-void Table::minimum(std::ostream &out, int columnIndex) {
 
+/// Print the max of the column
+/// \param out stream to input answer into
+/// \param columnIndex index of the column to calculate
+void Table::maximum(std::ostream &out, int columnIndex) const {
+    checkIndex(columnIndex);
+    columns[columnIndex]->maximum(out);
 }
 
+
+/// Print the min of the column
+/// \param out stream to input answer into
+/// \param columnIndex index of the column to calculate
+void Table::minimum(std::ostream &out, int columnIndex) const {
+    checkIndex(columnIndex);
+    columns[columnIndex]->minimum(out);
+}
+
+
+/// Stream insertion operator
+/// \param out output stream
+/// \param w table to output
+/// \return the stream with table information inserted
 std::ostream &operator<<(std::ostream &out, Table const &table) {
+    out << table.name << "\n"
+        << table.columnCount << " "
+        << table.rowCount << " ";
+
+    for (int i = 0; i < table.columnCount; i++) {
+        out << table.columns[i]->columnType() << ((i < table.columnCount - 1) ? " " : "\n");
+    }
+
+    for (int i = 0; i < table.rowCount; i++) {
+        for (int j = 0; j < table.columnCount; j++) {
+            table.columns[j]->print(out, i);
+            out << "\n";
+        }
+    }
+
     return out;
 }
