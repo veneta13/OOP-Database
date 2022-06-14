@@ -184,7 +184,7 @@ int FloatColumn::countValue(Value* value) {
 
 
 ColumnType FloatColumn::columnType() {
-    return ColumnType::Integer;
+    return ColumnType::FloatingPoint;
 }
 
 
