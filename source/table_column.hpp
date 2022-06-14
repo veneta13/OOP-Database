@@ -6,6 +6,7 @@
 #include "string_value.hpp"
 #include "null_value.hpp"
 #include "dynamic_array.hpp"
+#include <typeinfo>
 
 /// Represents the type of data in a column
 enum ColumnType {

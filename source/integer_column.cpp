@@ -1,5 +1,4 @@
 #include "integer_column.hpp"
-#include <typeinfo>
 
 /// Default constructor
 IntegerColumn::IntegerColumn() {
