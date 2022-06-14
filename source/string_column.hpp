@@ -45,6 +45,7 @@ public:
     void maximum(std::ostream& out) override;
     void minimum(std::ostream& out) override;
 
+    void print(std::ostream &out, int index) override;
     void print(std::ostream &out, int index, int width) override;
 };
 

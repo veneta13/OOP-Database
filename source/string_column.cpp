@@ -212,6 +212,18 @@ void StringColumn::minimum(std::ostream& out) {
 }
 
 
+void StringColumn::print(std::ostream &out, int index) {
+    Value* element = operator[](index);
+
+    if (typeid(*element) == typeid(NullValue&)) {
+        out << *dynamic_cast<NullValue*>(element);
+    }
+    else {
+        out << *dynamic_cast<StringValue*>(element);
+    }
+}
+
+
 void StringColumn::print(std::ostream &out, int index, int width) {
     Value* element = operator[](index);
 

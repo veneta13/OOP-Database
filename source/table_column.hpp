@@ -83,7 +83,16 @@ public:
     /// Print row
     /// \param out stream to insert row in
     /// \param index index of the row to print
+    /// \param width width of the stream output
     virtual void print(std::ostream &out, int index, int width) = 0;
+
+
+    /// Print row
+    /// \param out stream to insert row in
+    /// \param index index of the row to print
+    virtual void print(std::ostream &out, int index) = 0;
+
+
 
     /// Virtual destructor
     virtual ~TableColumn() = default;
