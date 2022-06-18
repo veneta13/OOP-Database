@@ -16,7 +16,8 @@ add_executable(tests
         source/float_column.cpp
         source/string_column.cpp
         source/table.cpp
-        source/executor.cpp)
+        source/executor.cpp
+        source/database.cpp)
 
 add_executable(main
         source/dynamic_array.cpp
@@ -30,7 +31,8 @@ add_executable(main
         source/float_column.cpp
         source/string_column.cpp
         source/table.cpp
-        source/executor.cpp)
+        source/executor.cpp
+        source/database.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
