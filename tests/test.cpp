@@ -2195,4 +2195,316 @@ TEST_CASE("Table tests")
         delete[] values3;
         delete[] values4;
     }
+
+    SECTION("Sum")
+    {
+        IntegerValue *intv1 = new IntegerValue(1);
+        IntegerValue *intv2 = new IntegerValue(2);
+        IntegerValue *intv3 = new IntegerValue(3);
+        IntegerValue *intv4 = new IntegerValue(4);
+        FloatValue *flov1 = new FloatValue(5.6);
+        FloatValue *flov2 = new FloatValue(-9.6);
+        FloatValue *flov3 = new FloatValue(2.6);
+        FloatValue *flov4 = new FloatValue(8.6);
+        StringValue *strv1 = new StringValue("string dummy1");
+        StringValue *strv2 = new StringValue("string dummy2");
+        StringValue *strv3 = new StringValue("string dummy3");
+        StringValue *strv4 = new StringValue("string dummy4");
+
+        Table table1("first table");
+
+        table1.addColumn(ColumnType::Integer);
+        table1.addColumn(ColumnType::String);
+        table1.addColumn(ColumnType::FloatingPoint);
+
+        Value **values = new Value *[3];
+
+        std::stringstream out;
+
+        values[0] = intv1;
+        values[1] = strv1;
+        values[2] = flov1;
+        table1.insertRow(values);
+
+        table1.sum(out, 0);
+        REQUIRE(out.str() == "SUM OF COLUMN: 1\n");
+        out=std::stringstream();
+        table1.sum(out, 1);
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+        out=std::stringstream();
+        table1.sum(out, 2);
+        REQUIRE(out.str() == "SUM OF COLUMN: 5.6\n");
+        out=std::stringstream();
+
+        values[0] = intv2;
+        values[1] = strv2;
+        values[2] = flov2;
+        table1.insertRow(values);
+        values[0] = intv3;
+        values[1] = strv3;
+        values[2] = flov3;
+        table1.insertRow(values);
+        values[0] = intv4;
+        values[1] = strv4;
+        values[2] = flov4;
+        table1.insertRow(values);
+
+        table1.sum(out, 0);
+        REQUIRE(out.str() == "SUM OF COLUMN: 10\n");
+        out=std::stringstream();
+        table1.sum(out, 1);
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+        out=std::stringstream();
+        table1.sum(out, 2);
+        REQUIRE(out.str() == "SUM OF COLUMN: 7.2\n");
+        out=std::stringstream();
+
+        delete intv1;
+        delete intv2;
+        delete intv3;
+        delete intv4;
+        delete strv1;
+        delete strv2;
+        delete strv3;
+        delete strv4;
+        delete flov1;
+        delete flov2;
+        delete flov3;
+        delete flov4;
+        delete[] values;
+    }
+
+    SECTION("Product")
+    {
+        IntegerValue *intv1 = new IntegerValue(1);
+        IntegerValue *intv2 = new IntegerValue(2);
+        IntegerValue *intv3 = new IntegerValue(3);
+        IntegerValue *intv4 = new IntegerValue(4);
+        FloatValue *flov1 = new FloatValue(5.6);
+        FloatValue *flov2 = new FloatValue(-9.6);
+        FloatValue *flov3 = new FloatValue(2.6);
+        FloatValue *flov4 = new FloatValue(8.6);
+        StringValue *strv1 = new StringValue("string dummy1");
+        StringValue *strv2 = new StringValue("string dummy2");
+        StringValue *strv3 = new StringValue("string dummy3");
+        StringValue *strv4 = new StringValue("string dummy4");
+
+        Table table1("first table");
+
+        table1.addColumn(ColumnType::Integer);
+        table1.addColumn(ColumnType::String);
+        table1.addColumn(ColumnType::FloatingPoint);
+
+        Value **values = new Value *[3];
+
+        std::stringstream out;
+
+        values[0] = intv1;
+        values[1] = strv1;
+        values[2] = flov1;
+        table1.insertRow(values);
+
+        table1.product(out, 0);
+        REQUIRE(out.str() == "PRODUCT OF COLUMN: 1\n");
+        out=std::stringstream();
+        table1.product(out, 1);
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+        out=std::stringstream();
+        table1.product(out, 2);
+        REQUIRE(out.str() == "PRODUCT OF COLUMN: 5.6\n");
+        out=std::stringstream();
+
+        values[0] = intv2;
+        values[1] = strv2;
+        values[2] = flov2;
+        table1.insertRow(values);
+        values[0] = intv3;
+        values[1] = strv3;
+        values[2] = flov3;
+        table1.insertRow(values);
+        values[0] = intv4;
+        values[1] = strv4;
+        values[2] = flov4;
+        table1.insertRow(values);
+
+        table1.product(out, 0);
+        REQUIRE(out.str() == "PRODUCT OF COLUMN: 24\n");
+        out=std::stringstream();
+        table1.product(out, 1);
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+        out=std::stringstream();
+        table1.product(out, 2);
+        REQUIRE(out.str() == "PRODUCT OF COLUMN: -1202.07\n");
+        out=std::stringstream();
+
+        delete intv1;
+        delete intv2;
+        delete intv3;
+        delete intv4;
+        delete strv1;
+        delete strv2;
+        delete strv3;
+        delete strv4;
+        delete flov1;
+        delete flov2;
+        delete flov3;
+        delete flov4;
+        delete[] values;
+    }
+
+    SECTION("Max")
+    {
+        IntegerValue *intv1 = new IntegerValue(1);
+        IntegerValue *intv2 = new IntegerValue(2);
+        IntegerValue *intv3 = new IntegerValue(3);
+        IntegerValue *intv4 = new IntegerValue(4);
+        FloatValue *flov1 = new FloatValue(5.6);
+        FloatValue *flov2 = new FloatValue(-9.6);
+        FloatValue *flov3 = new FloatValue(2.6);
+        FloatValue *flov4 = new FloatValue(8.6);
+        StringValue *strv1 = new StringValue("string dummy1");
+        StringValue *strv2 = new StringValue("string dummy2");
+        StringValue *strv3 = new StringValue("string dummy3");
+        StringValue *strv4 = new StringValue("string dummy4");
+
+        Table table1("first table");
+
+        table1.addColumn(ColumnType::Integer);
+        table1.addColumn(ColumnType::String);
+        table1.addColumn(ColumnType::FloatingPoint);
+
+        Value **values = new Value *[3];
+
+        std::stringstream out;
+
+        values[0] = intv1;
+        values[1] = strv1;
+        values[2] = flov1;
+        table1.insertRow(values);
+
+        table1.maximum(out, 0);
+        REQUIRE(out.str() == "MAX: 1\n");
+        out=std::stringstream();
+        table1.maximum(out, 1);
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+        out=std::stringstream();
+        table1.maximum(out, 2);
+        REQUIRE(out.str() == "MAX: 5.6\n");
+        out=std::stringstream();
+
+        values[0] = intv2;
+        values[1] = strv2;
+        values[2] = flov2;
+        table1.insertRow(values);
+        values[0] = intv3;
+        values[1] = strv3;
+        values[2] = flov3;
+        table1.insertRow(values);
+        values[0] = intv4;
+        values[1] = strv4;
+        values[2] = flov4;
+        table1.insertRow(values);
+
+        table1.maximum(out, 0);
+        REQUIRE(out.str() == "MAX: 4\n");
+        out=std::stringstream();
+        table1.maximum(out, 1);
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+        out=std::stringstream();
+        table1.maximum(out, 2);
+        REQUIRE(out.str() == "MAX: 8.6\n");
+        out=std::stringstream();
+
+        delete intv1;
+        delete intv2;
+        delete intv3;
+        delete intv4;
+        delete strv1;
+        delete strv2;
+        delete strv3;
+        delete strv4;
+        delete flov1;
+        delete flov2;
+        delete flov3;
+        delete flov4;
+        delete[] values;
+    }
+
+    SECTION("Max")
+    {
+        IntegerValue *intv1 = new IntegerValue(1);
+        IntegerValue *intv2 = new IntegerValue(2);
+        IntegerValue *intv3 = new IntegerValue(3);
+        IntegerValue *intv4 = new IntegerValue(4);
+        FloatValue *flov1 = new FloatValue(5.6);
+        FloatValue *flov2 = new FloatValue(-9.6);
+        FloatValue *flov3 = new FloatValue(2.6);
+        FloatValue *flov4 = new FloatValue(8.6);
+        StringValue *strv1 = new StringValue("string dummy1");
+        StringValue *strv2 = new StringValue("string dummy2");
+        StringValue *strv3 = new StringValue("string dummy3");
+        StringValue *strv4 = new StringValue("string dummy4");
+
+        Table table1("first table");
+
+        table1.addColumn(ColumnType::Integer);
+        table1.addColumn(ColumnType::String);
+        table1.addColumn(ColumnType::FloatingPoint);
+
+        Value **values = new Value *[3];
+
+        std::stringstream out;
+
+        values[0] = intv1;
+        values[1] = strv1;
+        values[2] = flov1;
+        table1.insertRow(values);
+
+        table1.minimum(out, 0);
+        REQUIRE(out.str() == "MIN: 1\n");
+        out=std::stringstream();
+        table1.minimum(out, 1);
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+        out=std::stringstream();
+        table1.minimum(out, 2);
+        REQUIRE(out.str() == "MIN: 5.6\n");
+        out=std::stringstream();
+
+        values[0] = intv2;
+        values[1] = strv2;
+        values[2] = flov2;
+        table1.insertRow(values);
+        values[0] = intv3;
+        values[1] = strv3;
+        values[2] = flov3;
+        table1.insertRow(values);
+        values[0] = intv4;
+        values[1] = strv4;
+        values[2] = flov4;
+        table1.insertRow(values);
+
+        table1.minimum(out, 0);
+        REQUIRE(out.str() == "MIN: 1\n");
+        out=std::stringstream();
+        table1.minimum(out, 1);
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+        out=std::stringstream();
+        table1.minimum(out, 2);
+        REQUIRE(out.str() == "MIN: -9.6\n");
+        out=std::stringstream();
+
+        delete intv1;
+        delete intv2;
+        delete intv3;
+        delete intv4;
+        delete strv1;
+        delete strv2;
+        delete strv3;
+        delete strv4;
+        delete flov1;
+        delete flov2;
+        delete flov3;
+        delete flov4;
+        delete[] values;
+    }
 }
