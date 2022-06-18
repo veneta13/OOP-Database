@@ -31,6 +31,7 @@ class Table {
     void checkColumnIndex(int columnIndex) const;
     void checkRowIndex(int rowIndex) const;
     void join(Table*& table, int columnTable1, int columnTable2, Table const& other) const;
+    void printRow(std::ostream &out, int index) const;
 
 public:
     Table();

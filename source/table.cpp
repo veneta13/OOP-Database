@@ -191,6 +191,19 @@ void Table::join(Table*& table, int columnTable1, int columnTable2, Table const&
 }
 
 
+/// Print row
+/// \param out stream to input the row in
+/// \param index row index to print
+void Table::printRow(std::ostream &out, int index) const {
+    out << "|" << std::setw(10) << index;
+    for (int i = 0; i < columnCount; i++) {
+        out << "|";
+        columns[i]->print(out, index, 10);
+    }
+    out << "|\n";
+}
+
+
 /// Setter for table name
 /// \param _name new name
 void Table::setName(char const *_name) {
@@ -347,7 +360,9 @@ Table *Table::innerJoin(Table const &other, int columnTable1, int columnTable2) 
 /// \param pageSize number of rows on a page
 /// \param currentPage page currently displayed
 void Table::showPage(std::ostream &out, int pageSize, int currentPage) const {
-
+    for (int i = 0; i < pageSize; i++) {
+        printRow(out, (pageSize * currentPage) + i);
+    }
 }
 
 
@@ -355,7 +370,9 @@ void Table::showPage(std::ostream &out, int pageSize, int currentPage) const {
 /// \param out stream to insert in
 /// \param indexes rows to show
 void Table::showPage(std::ostream &out, DynamicArray<int> &indexes) const {
-
+    for (int i = 0; i < indexes.size(); i++) {
+        printRow(out, indexes[i]);
+    }
 }
 
 /// Print the sum of the column

@@ -2507,4 +2507,73 @@ TEST_CASE("Table tests")
         delete flov4;
         delete[] values;
     }
+
+    SECTION("Show page - full")
+    {
+        IntegerValue *intv1 = new IntegerValue(1);
+        IntegerValue *intv2 = new IntegerValue(2);
+        FloatValue *flov1 = new FloatValue(5.6);
+        FloatValue *flov2 = new FloatValue(-9.6);
+        StringValue *strv1 = new StringValue("string dummy1");
+        StringValue *strv2 = new StringValue("string dummy2");
+
+        Table table("first table");
+
+        table.addColumn(ColumnType::Integer);
+        table.addColumn(ColumnType::String);
+        table.addColumn(ColumnType::FloatingPoint);
+
+        Value **values = new Value *[3];
+
+        std::stringstream out;
+
+        values[0] = intv1;
+        values[1] = strv1;
+        values[2] = flov1;
+        table.insertRow(values);
+
+        values[0] = intv2;
+        values[1] = strv2;
+        values[2] = flov2;
+        table.insertRow(values);
+
+        table.showPage(out, 1, 0);
+        REQUIRE(out.str() == "|         0|         1|string dummy1|       5.6|\n");
+        out = std::stringstream();
+
+        table.showPage(out, 1, 1);
+        REQUIRE(out.str() == "|         1|         2|string dummy2|      -9.6|\n");
+        out = std::stringstream();
+
+        table.showPage(out, 2, 0);
+        REQUIRE(out.str() == "|         0|         1|string dummy1|       5.6|\n"
+                             "|         1|         2|string dummy2|      -9.6|\n");
+        out = std::stringstream();
+
+
+        DynamicArray<int> indexes;
+        indexes.push_back(0);
+        table.showPage(out, indexes);
+        REQUIRE(out.str() == "|         0|         1|string dummy1|       5.6|\n");
+        indexes.pop_back();
+        out = std::stringstream();
+
+        indexes.push_back(1);
+        table.showPage(out, indexes);
+        REQUIRE(out.str() == "|         1|         2|string dummy2|      -9.6|\n");
+        out = std::stringstream();
+
+        indexes.push_back(0);
+        table.showPage(out, 2, 0);
+        REQUIRE(out.str() == "|         0|         1|string dummy1|       5.6|\n"
+                             "|         1|         2|string dummy2|      -9.6|\n");
+
+        delete intv1;
+        delete intv2;
+        delete strv1;
+        delete strv2;
+        delete flov1;
+        delete flov2;
+        delete[] values;
+    }
 }
