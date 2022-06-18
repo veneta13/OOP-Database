@@ -2430,7 +2430,7 @@ TEST_CASE("Table tests")
         delete[] values;
     }
 
-    SECTION("Max")
+    SECTION("Min")
     {
         IntegerValue *intv1 = new IntegerValue(1);
         IntegerValue *intv2 = new IntegerValue(2);
