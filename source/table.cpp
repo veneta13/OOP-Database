@@ -155,6 +155,42 @@ void Table::checkRowIndex(int rowIndex) const {
 }
 
 
+/// Helper function for InnerJoin
+/// \param table result of the join
+/// \param columnTable1 index of the column performing join on in table 1
+/// \param columnTable2 index of the column performing join on in table 2
+/// \param other table to join with
+void Table::join(Table*& table, int columnTable1, int columnTable2, Table const& other) const {
+    DynamicArray<int> indexes;
+    for (int i = 0; i < rowCount; i++) {
+        other.columns[columnTable2]->select(columns[columnTable1]->operator[](i), indexes);
+        if (indexes.size() > 0) {
+            Value** row1 = getRow(i);
+            Value** row2 = other.getRow(indexes[indexes.size()-1]);
+            indexes.pop_back();
+
+            Value** joined = new Value*[columnCount + other.columnCount - 1];
+            int skipped = 0; // helper to skip adding the join column twice
+            for (int j = 0; j < columnCount; j++) {
+                joined[j] = row1[j];
+            }
+            for (int j = columnCount; j < columnCount + other.columnCount; j++) {
+                if (j - columnCount == columnTable2) {
+                    skipped = 1;
+                }
+                else {
+                    joined[j - skipped] = row2[j - columnCount];
+                }
+            }
+            table->insertRow(joined);
+            delete[] row1;
+            delete[] row2;
+            delete[] joined;
+        }
+    }
+}
+
+
 /// Setter for table name
 /// \param _name new name
 void Table::setName(char const *_name) {
@@ -223,7 +259,8 @@ Value** Table::getRow(int index) const {
     Value** row = new Value*[columnCount];
 
     for (int i = 0; i < columnCount; i++) {
-        row[i] = columns[i]->operator[](i);
+        Value* temp = columns[i]->operator[](index);
+        row[i] = temp;
     }
 
     return row;
@@ -279,7 +316,29 @@ int Table::countRows(int columnIndex, Value *value) const {
 /// \param columnTable2 index of column to perform join on in table 2
 /// \return table - result of the join
 Table *Table::innerJoin(Table const &other, int columnTable1, int columnTable2) const {
-    return nullptr;
+    if (columns[columnTable1]->columnType() != other.columns[columnTable2]->columnType()) {
+        throw std::invalid_argument("Cannot perform join on columns of different types");
+    }
+
+    char newTableName[500];
+    strcpy(newTableName, "Joined table - ");
+    strcat(newTableName, this->name);
+    strcat(newTableName, " & ");
+    strcat(newTableName, other.name);
+
+    Table* newTable = new Table(newTableName);
+
+    for (int i = 0; i < columnCount; i++) {
+        newTable->addColumn(columns[i]->columnType());
+    }
+    for (int i = 0; i < other.columnCount; i++) {
+        if (i == columnTable2) { continue; }
+        newTable->addColumn(other.columns[i]->columnType());
+    }
+
+    join(newTable, columnTable1, columnTable2, other);
+
+    return newTable;
 }
 
 

@@ -1858,6 +1858,65 @@ TEST_CASE("Table tests")
         delete[] values;
     }
 
+    SECTION("Get row")
+    {
+        IntegerValue *intv1 = new IntegerValue(1);
+        IntegerValue *intv2 = new IntegerValue(2);
+        IntegerValue *intv3 = new IntegerValue(3);
+        StringValue *strv1 = new StringValue("string dummy1");
+        StringValue *strv2 = new StringValue("string dummy2");
+        StringValue *strv3 = new StringValue("string dummy3");
+
+        Table table("table");
+
+        table.addColumn(ColumnType::Integer);
+        table.addColumn(ColumnType::String);
+        table.addColumn(ColumnType::Integer);
+
+        Value **values = new Value *[3];
+
+        values[0] = intv1;
+        values[1] = strv2;
+        values[2] = intv2;
+        table.insertRow(values);
+
+        values[0] = intv3;
+        values[1] = strv3;
+        values[2] = intv2;
+        table.insertRow(values);
+
+        values[0] = intv2;
+        values[1] = strv1;
+        values[2] = intv2;
+        table.insertRow(values);
+
+        Value** result = table.getRow(0);
+        REQUIRE((*dynamic_cast<IntegerValue*>(result[0])) == (*dynamic_cast<IntegerValue*>(intv1)));
+        REQUIRE((*dynamic_cast<StringValue*>(result[1])) == (*dynamic_cast<StringValue*>(strv2)));
+        REQUIRE((*dynamic_cast<IntegerValue*>(result[2])) == (*dynamic_cast<IntegerValue*>(intv2)));
+        delete[] result;
+
+        result = table.getRow(1);
+        REQUIRE((*dynamic_cast<IntegerValue*>(result[0])) == (*dynamic_cast<IntegerValue*>(intv3)));
+        REQUIRE((*dynamic_cast<StringValue*>(result[1])) == (*dynamic_cast<StringValue*>(strv3)));
+        REQUIRE((*dynamic_cast<IntegerValue*>(result[2])) == (*dynamic_cast<IntegerValue*>(intv2)));
+        delete[] result;
+
+        result = table.getRow(2);
+        REQUIRE((*dynamic_cast<IntegerValue*>(result[0])) == (*dynamic_cast<IntegerValue*>(intv2)));
+        REQUIRE((*dynamic_cast<StringValue*>(result[1])) == (*dynamic_cast<StringValue*>(strv1)));
+        REQUIRE((*dynamic_cast<IntegerValue*>(result[2])) == (*dynamic_cast<IntegerValue*>(intv2)));
+        delete[] result;
+
+        delete intv1;
+        delete intv2;
+        delete intv3;
+        delete strv1;
+        delete strv2;
+        delete strv3;
+        delete[] values;
+    }
+
     SECTION("Select")
     {
         DynamicArray<int> indexes;
@@ -2050,5 +2109,90 @@ TEST_CASE("Table tests")
         delete nullv;
         delete[] values1;
         delete[] values2;
+    }
+
+    SECTION("Inner join")
+    {
+        IntegerValue *intv1 = new IntegerValue(1);
+        IntegerValue *intv2 = new IntegerValue(2);
+        IntegerValue *intv3 = new IntegerValue(3);
+        IntegerValue *intv4 = new IntegerValue(4);
+        StringValue *strv1 = new StringValue("string dummy1");
+        StringValue *strv2 = new StringValue("string dummy2");
+        StringValue *strv3 = new StringValue("string dummy3");
+        StringValue *strv4 = new StringValue("string dummy4");
+
+        Table table1("first table");
+        Table table2("second table");
+
+        table1.addColumn(ColumnType::Integer);
+        table1.addColumn(ColumnType::String);
+        table1.addColumn(ColumnType::Integer);
+
+        table2.addColumn(ColumnType::Integer);
+        table2.addColumn(ColumnType::String);
+        table2.addColumn(ColumnType::String);
+        table2.addColumn(ColumnType::Integer);
+
+        Value **values3 = new Value *[3];
+        Value **values4 = new Value *[4];
+
+        values3[0] = intv1;
+        values3[1] = strv1;
+        values3[2] = intv3;
+        table1.insertRow(values3);
+        values3[0] = intv2;
+        values3[1] = strv3;
+        values3[2] = intv4;
+        table1.insertRow(values3);
+
+        values4[0] = intv1;
+        values4[1] = strv1;
+        values4[2] = strv3;
+        values4[3] = intv4;
+        table2.insertRow(values4);
+        values4[0] = intv1;
+        values4[1] = strv2;
+        values4[2] = strv3;
+        values4[3] = intv2;
+        table2.insertRow(values4);
+        values4[0] = intv3;
+        values4[1] = strv2;
+        values4[2] = strv4;
+        values4[3] = intv3;
+        table2.insertRow(values4);
+
+        Table* joinedTable = table1.innerJoin(table2, 0, 0);
+
+        std::stringstream out;
+        out << (*joinedTable);
+
+        REQUIRE(strcmp(joinedTable->getName(), "Joined table - first table & second table") == 0);
+        REQUIRE(out.str() == "Joined table - first table & second table\n"
+                             "6 2 1 3 1 3 3 1\n"
+                             "1\n"
+                             "string dummy1\n"
+                             "3\n"
+                             "string dummy2\n"
+                             "string dummy3\n"
+                             "2\n"
+                             "2\n"
+                             "string dummy3\n"
+                             "4\n"
+                             "string dummy1\n"
+                             "string dummy3\n"
+                             "4\n");
+
+        delete joinedTable;
+        delete intv1;
+        delete intv2;
+        delete intv3;
+        delete intv4;
+        delete strv1;
+        delete strv2;
+        delete strv3;
+        delete strv4;
+        delete[] values3;
+        delete[] values4;
     }
 }

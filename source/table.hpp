@@ -30,6 +30,7 @@ class Table {
     void copy(Table const& other);
     void checkColumnIndex(int columnIndex) const;
     void checkRowIndex(int rowIndex) const;
+    void join(Table*& table, int columnTable1, int columnTable2, Table const& other) const;
 
 public:
     Table();
