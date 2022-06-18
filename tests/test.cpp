@@ -2017,6 +2017,38 @@ TEST_CASE("Table tests")
 
     SECTION("Count")
     {
+        IntegerValue *intv1 = new IntegerValue(5);
+        IntegerValue *intv2 = new IntegerValue(6);
+        StringValue *strv = new StringValue("string dummy");
+        NullValue *nullv = new NullValue();
 
+        Table table("dummy table", "file.txt");
+        REQUIRE(strcmp(table.getName(), "dummy table") == 0);
+        REQUIRE(strcmp(table.getFile(), "file.txt") == 0);
+
+        Value **values1 = new Value *[2];
+        values1[0] = intv1;
+        values1[1] = strv;
+        Value **values2 = new Value *[2];
+        values2[0] = intv2;
+        values2[1] = strv;
+
+        table.addColumn(ColumnType::Integer);
+        table.addColumn(ColumnType::String);
+        table.insertRow(values1);
+        table.insertRow(values2);
+
+        REQUIRE(table.countRows(0, intv1) == 1);
+        REQUIRE(table.countRows(0, intv2) == 1);
+        REQUIRE(table.countRows(1, strv) == 2);
+        REQUIRE(table.countRows(0, nullv) == 0);
+        REQUIRE(table.countRows(1, nullv) == 0);
+
+        delete intv1;
+        delete intv2;
+        delete strv;
+        delete nullv;
+        delete[] values1;
+        delete[] values2;
     }
 }
