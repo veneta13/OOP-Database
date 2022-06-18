@@ -28,7 +28,8 @@ class Table {
     void clear();
     void expand();
     void copy(Table const& other);
-    void checkIndex(int columnIndex) const;
+    void checkColumnIndex(int columnIndex) const;
+    void checkRowIndex(int rowIndex) const;
 
 public:
     Table();
@@ -46,6 +47,7 @@ public:
 
     void addColumn(ColumnType type);
     void insertRow(Value** values);
+    Value** getRow(int index) const;
 
     void selectElement(int columnIndex, DynamicArray<int>& indexes, Value* value) const;
     void deleteElement(int columnIndex, Value* value);
@@ -53,7 +55,7 @@ public:
 
     int countRows(int columnIndex, Value* value) const;
 
-    Table* innerJoin(Table const& other) const;
+    Table* innerJoin(Table const& other, int columnTable1, int columnTable2) const;
 
     void showPage(std::ostream& out, int pageSize, int currentPage) const;
     void showPage(std::ostream& out, DynamicArray<int> &indexes) const;

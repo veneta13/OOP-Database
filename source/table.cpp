@@ -139,9 +139,18 @@ void Table::copy(Table const &other) {
 
 /// Check if column exists in the table
 /// \param columnIndex index of the column
-void Table::checkIndex(int columnIndex) const {
+void Table::checkColumnIndex(int columnIndex) const {
     if (columnIndex < 0 || columnIndex >= columnCount) {
         throw std::invalid_argument("Column with such index does not exist");
+    }
+}
+
+
+/// Check if row exists in the table
+/// \param rowIndex index of the row
+void Table::checkRowIndex(int rowIndex) const {
+    if (rowIndex < 0 || rowIndex >= rowCount) {
+        throw std::invalid_argument("Row with such index does not exist");
     }
 }
 
@@ -206,12 +215,27 @@ void Table::insertRow(Value** values) {
 }
 
 
+/// Get table row
+/// \param index index of the row
+/// \return array of Value pointers
+Value** Table::getRow(int index) const {
+    checkRowIndex(index);
+    Value** row = new Value*[columnCount];
+
+    for (int i = 0; i < columnCount; i++) {
+        row[i] = columns[i]->operator[](i);
+    }
+
+    return row;
+}
+
+
 /// Find all rows containing the value in a certain column
 /// \param columnIndex column to search in
 /// \param indexes storage for the indexes
 /// \param value value to search for
 void Table::selectElement(int columnIndex, DynamicArray<int>& indexes,  Value *value) const {
-    checkIndex(columnIndex);
+    checkColumnIndex(columnIndex);
     columns[columnIndex]->select(value, indexes);
 }
 
@@ -220,7 +244,7 @@ void Table::selectElement(int columnIndex, DynamicArray<int>& indexes,  Value *v
 /// \param columnIndex index of the column
 /// \param value value to search for
 void Table::deleteElement(int columnIndex, Value *value) {
-    checkIndex(columnIndex);
+    checkColumnIndex(columnIndex);
     DynamicArray<int> indexes;
     selectElement(columnIndex, indexes, value);
     for (int i = 0; i < columnCount; i++) {
@@ -234,7 +258,7 @@ void Table::deleteElement(int columnIndex, Value *value) {
 /// \param oldValue value to update
 /// \param newValue new value
 void Table::updateElements(int columnIndex, Value *oldValue, Value *newValue) {
-    checkIndex(columnIndex);
+    checkColumnIndex(columnIndex);
     columns[columnIndex]->update(oldValue, newValue);
 }
 
@@ -244,15 +268,17 @@ void Table::updateElements(int columnIndex, Value *oldValue, Value *newValue) {
 /// \param value value to search for
 /// \return number of columns
 int Table::countRows(int columnIndex, Value *value) const {
-    checkIndex(columnIndex);
+    checkColumnIndex(columnIndex);
     return columns[columnIndex]->countValue(value);
 }
 
 
 /// Perform inner join
 /// \param other table to join with
+/// \param columnTable1 index of column to perform join on in table 1
+/// \param columnTable2 index of column to perform join on in table 2
 /// \return table - result of the join
-Table *Table::innerJoin(Table const &other) const {
+Table *Table::innerJoin(Table const &other, int columnTable1, int columnTable2) const {
     return nullptr;
 }
 
@@ -277,7 +303,7 @@ void Table::showPage(std::ostream &out, DynamicArray<int> &indexes) const {
 /// \param out stream to input answer into
 /// \param columnIndex index of the column to calculate
 void Table::sum(std::ostream &out, int columnIndex) const {
-    checkIndex(columnIndex);
+    checkColumnIndex(columnIndex);
     columns[columnIndex]->sum(out);
 }
 
@@ -286,7 +312,7 @@ void Table::sum(std::ostream &out, int columnIndex) const {
 /// \param out stream to input answer into
 /// \param columnIndex index of the column to calculate
 void Table::product(std::ostream &out, int columnIndex) const {
-    checkIndex(columnIndex);
+    checkColumnIndex(columnIndex);
     columns[columnIndex]->product(out);
 }
 
@@ -295,7 +321,7 @@ void Table::product(std::ostream &out, int columnIndex) const {
 /// \param out stream to input answer into
 /// \param columnIndex index of the column to calculate
 void Table::maximum(std::ostream &out, int columnIndex) const {
-    checkIndex(columnIndex);
+    checkColumnIndex(columnIndex);
     columns[columnIndex]->maximum(out);
 }
 
@@ -304,7 +330,7 @@ void Table::maximum(std::ostream &out, int columnIndex) const {
 /// \param out stream to input answer into
 /// \param columnIndex index of the column to calculate
 void Table::minimum(std::ostream &out, int columnIndex) const {
-    checkIndex(columnIndex);
+    checkColumnIndex(columnIndex);
     columns[columnIndex]->minimum(out);
 }
 
