@@ -137,10 +137,7 @@ void StringColumn::insert(Value* value) {
 }
 
 
-void StringColumn::update(Value* oldValue, Value* newValue) {
-    DynamicArray<int> indexes;
-    select(oldValue, indexes);
-
+void StringColumn::update(DynamicArray<int> indexes, Value *newValue) {
     if (typeid(*newValue) == typeid(NullValue&)) {
         for (int i = 0; i < indexes.size(); i++) {
             delete elements[indexes[i]];

@@ -31,10 +31,10 @@ public:
     /// \return the value of the row
     virtual Value* operator[](int index) = 0;
 
-    /// Update the values
-    /// \param oldValue value to update
-    /// \param newValue new value
-    virtual void update(Value* oldValue, Value* newValue) = 0;
+    /// Update values
+    /// \param indexes indexes of rows to update
+    /// \param newValue value to replace the old with
+    virtual void update(DynamicArray<int> indexes, Value* newValue) = 0;
 
 
     /// Get the indexes of the rows containing a certain value

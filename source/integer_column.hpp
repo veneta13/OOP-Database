@@ -31,7 +31,7 @@ public:
     Value* operator[](int index) override;
 
     void insert(Value* value) override;
-    void update(Value* oldValue, Value* newValue) override;
+    void update(DynamicArray<int> indexes, Value *newValue) override;
     void deleteByIndexes(DynamicArray<int> &indexes) override;
     void select(Value* value, DynamicArray<int>& indexes) const override;
 

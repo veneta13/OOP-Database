@@ -137,10 +137,7 @@ void IntegerColumn::insert(Value* value) {
 }
 
 
-void IntegerColumn::update(Value* oldValue, Value* newValue) {
-    DynamicArray<int> indexes;
-    select(oldValue, indexes);
-
+void IntegerColumn::update(DynamicArray<int> indexes, Value *newValue) {
     if (typeid(*newValue) == typeid(NullValue&)) {
         for (int i = 0; i < indexes.size(); i++) {
             delete elements[indexes[i]];
