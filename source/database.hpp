@@ -25,8 +25,8 @@ public:
     Database& operator=(Database const& other);
     ~Database();
 
-    bool import(std::istream& in);
-    bool export(std::ostream& out);
+    bool importTable(std::istream& in);
+    bool exportTable(std::ostream& out, const char* tableName);
 
     void showTables(std::ostream& out);
     void describe(std::ostream& out, int tableIndex);

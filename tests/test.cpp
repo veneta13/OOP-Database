@@ -627,17 +627,23 @@ TEST_CASE("Integer column tests")
         REQUIRE(ic.countValue(intv2) == 1);
         REQUIRE(ic.countValue(intv9) == 0);
 
-        ic.update(intv2, intv9);
+        DynamicArray<int> da1;
+        ic.select(intv2, da1);
+        ic.update(da1, intv9);
         REQUIRE(ic.countValue(intv5) == 2);
         REQUIRE(ic.countValue(intv2) == 0);
         REQUIRE(ic.countValue(intv9) == 1);
 
-        ic.update(intv9, intv5);
+        DynamicArray<int> da2;
+        ic.select(intv9, da2);
+        ic.update(da2, intv5);
         REQUIRE(ic.countValue(intv5) == 3);
         REQUIRE(ic.countValue(intv2) == 0);
         REQUIRE(ic.countValue(intv9) == 0);
 
-        ic.update(intv5, nullv);
+        DynamicArray<int> da3;
+        ic.select(intv5, da3);
+        ic.update(da3, nullv);
         REQUIRE(ic.countValue(intv5) == 0);
         REQUIRE(ic.countValue(intv2) == 0);
         REQUIRE(ic.countValue(intv9) == 0);
@@ -1056,17 +1062,23 @@ TEST_CASE("Float column tests")
         REQUIRE(fc.countValue(flov2) == 1);
         REQUIRE(fc.countValue(flov9) == 0);
 
-        fc.update(flov2, flov9);
+        DynamicArray<int> da1;
+        fc.select(flov2, da1);
+        fc.update(da1, flov9);
         REQUIRE(fc.countValue(flov5) == 2);
         REQUIRE(fc.countValue(flov2) == 0);
         REQUIRE(fc.countValue(flov9) == 1);
 
-        fc.update(flov9, flov5);
+        DynamicArray<int> da2;
+        fc.select(flov9, da2);
+        fc.update(da2, flov5);
         REQUIRE(fc.countValue(flov5) == 3);
         REQUIRE(fc.countValue(flov2) == 0);
         REQUIRE(fc.countValue(flov9) == 0);
 
-        fc.update(flov5, nullv);
+        DynamicArray<int> da3;
+        fc.select(flov5, da1);
+        fc.update(da1, nullv);
         REQUIRE(fc.countValue(flov5) == 0);
         REQUIRE(fc.countValue(flov2) == 0);
         REQUIRE(fc.countValue(flov9) == 0);
@@ -1485,17 +1497,23 @@ TEST_CASE("String column tests")
         REQUIRE(sc.countValue(strv2) == 1);
         REQUIRE(sc.countValue(strv9) == 0);
 
-        sc.update(strv2, strv9);
+        DynamicArray<int> da1;
+        sc.select(strv2, da1);
+        sc.update(da1, strv9);
         REQUIRE(sc.countValue(strv5) == 2);
         REQUIRE(sc.countValue(strv2) == 0);
         REQUIRE(sc.countValue(strv9) == 1);
 
-        sc.update(strv9, strv5);
+        DynamicArray<int> da2;
+        sc.select(strv9, da2);
+        sc.update(da2, strv5);
         REQUIRE(sc.countValue(strv5) == 3);
         REQUIRE(sc.countValue(strv2) == 0);
         REQUIRE(sc.countValue(strv9) == 0);
 
-        sc.update(strv5, nullv);
+        DynamicArray<int> da3;
+        sc.select(strv5, da3);
+        sc.update(da3, nullv);
         REQUIRE(sc.countValue(strv5) == 0);
         REQUIRE(sc.countValue(strv2) == 0);
         REQUIRE(sc.countValue(strv9) == 0);

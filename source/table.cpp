@@ -309,7 +309,9 @@ void Table::deleteElement(int columnIndex, Value *value) {
 /// \param newValue new value
 void Table::updateElements(int columnIndex, Value *oldValue, Value *newValue) {
     checkColumnIndex(columnIndex);
-    columns[columnIndex]->update(oldValue, newValue);
+    DynamicArray<int> indexes;
+    columns[columnIndex]->select(oldValue, indexes);
+    columns[columnIndex]->update(indexes, newValue);
 }
 
 
