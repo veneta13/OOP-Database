@@ -190,21 +190,21 @@ int StringColumn::size() const {
 }
 
 
-void StringColumn::sum(std::ostream& out) {
+void StringColumn::sum(std::ostream& out, DynamicArray<int>& indexes) {
     out << "Operation is not supported for nonnumerical columns.\n";
 }
 
 
-void StringColumn::product(std::ostream& out) {
+void StringColumn::product(std::ostream& out, DynamicArray<int>& indexes) {
     out << "Operation is not supported for nonnumerical columns.\n";
 }
 
 
-void StringColumn::maximum(std::ostream& out) {
+void StringColumn::maximum(std::ostream& out, DynamicArray<int>& indexes) {
     out << "Operation is not supported for nonnumerical columns.\n";
 }
 
-void StringColumn::minimum(std::ostream& out) {
+void StringColumn::minimum(std::ostream& out, DynamicArray<int>& indexes) {
     out << "Operation is not supported for nonnumerical columns.\n";
 }
 

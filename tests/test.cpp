@@ -810,7 +810,13 @@ TEST_CASE("Integer column tests")
         ic.insert(nullv);
 
         std::stringstream out;
-        ic.sum(out);
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+        dyn.push_back(1);
+        dyn.push_back(2);
+        dyn.push_back(3);
+        dyn.push_back(4);
+        ic.sum(out, dyn);
 
         REQUIRE(out.str() == "SUM OF COLUMN: 21\n");
 
@@ -835,7 +841,13 @@ TEST_CASE("Integer column tests")
         ic.insert(nullv);
 
         std::stringstream out;
-        ic.product(out);
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+        dyn.push_back(1);
+        dyn.push_back(2);
+        dyn.push_back(3);
+        dyn.push_back(4);
+        ic.product(out, dyn);
 
         REQUIRE(out.str() == "PRODUCT OF COLUMN: 450\n");
 
@@ -860,12 +872,18 @@ TEST_CASE("Integer column tests")
         ic.insert(nullv);
 
         std::stringstream out, out1, out2;
-        ic.maximum(out);
-        ic1.maximum(out1);
-        ic2.maximum(out2);
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+        dyn.push_back(1);
+        dyn.push_back(2);
+        dyn.push_back(3);
+        dyn.push_back(4);
+        ic.maximum(out ,dyn);
+        ic1.maximum(out1, dyn);
+        ic2.maximum(out2, dyn);
 
         REQUIRE(out.str() == "MAX: 9\n");
-        REQUIRE(out1.str() == "Column contains only NULL!\n");
+        REQUIRE(out1.str() == "Values contain only NULL!\n");
         REQUIRE(out2.str() == "EMPTY COLUMN - no MAX value!\n");
 
         delete intv5;
@@ -889,12 +907,18 @@ TEST_CASE("Integer column tests")
         ic.insert(nullv);
 
         std::stringstream out, out1, out2;
-        ic.minimum(out);
-        ic1.minimum(out1);
-        ic2.minimum(out2);
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+        dyn.push_back(1);
+        dyn.push_back(2);
+        dyn.push_back(3);
+        dyn.push_back(4);
+        ic.minimum(out ,dyn);
+        ic1.minimum(out1, dyn);
+        ic2.minimum(out2, dyn);
 
         REQUIRE(out.str() == "MIN: 2\n");
-        REQUIRE(out1.str() == "Column contains only NULL!\n");
+        REQUIRE(out1.str() == "Values contain only NULL!\n");
         REQUIRE(out2.str() == "EMPTY COLUMN - no MIN value!\n");
 
         delete intv5;
@@ -1245,7 +1269,13 @@ TEST_CASE("Float column tests")
         fc.insert(nullv);
 
         std::stringstream out;
-        fc.sum(out);
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+        dyn.push_back(1);
+        dyn.push_back(2);
+        dyn.push_back(3);
+        dyn.push_back(4);
+        fc.sum(out ,dyn);
 
         REQUIRE(out.str() == "SUM OF COLUMN: 23.1\n");
 
@@ -1270,7 +1300,13 @@ TEST_CASE("Float column tests")
         fc.insert(nullv);
 
         std::stringstream out;
-        fc.product(out);
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+        dyn.push_back(1);
+        dyn.push_back(2);
+        dyn.push_back(3);
+        dyn.push_back(4);
+        fc.product(out ,dyn);
 
         REQUIRE(out.str() == "PRODUCT OF COLUMN: 658.845\n");
 
@@ -1295,12 +1331,18 @@ TEST_CASE("Float column tests")
         fc.insert(nullv);
 
         std::stringstream out, out1, out2;
-        fc.maximum(out);
-        fc1.maximum(out1);
-        fc2.maximum(out2);
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+        dyn.push_back(1);
+        dyn.push_back(2);
+        dyn.push_back(3);
+        dyn.push_back(4);
+        fc.maximum(out ,dyn);
+        fc1.maximum(out1, dyn);
+        fc2.maximum(out2, dyn);
 
         REQUIRE(out.str() == "MAX: 9.9\n");
-        REQUIRE(out1.str() == "Column contains only NULL!\n");
+        REQUIRE(out1.str() == "Values contain only NULL!\n");
         REQUIRE(out2.str() == "EMPTY COLUMN - no MAX value!\n");
 
         delete flov5;
@@ -1324,12 +1366,18 @@ TEST_CASE("Float column tests")
         fc.insert(nullv);
 
         std::stringstream out, out1, out2;
-        fc.minimum(out);
-        fc1.minimum(out1);
-        fc2.minimum(out2);
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+        dyn.push_back(1);
+        dyn.push_back(2);
+        dyn.push_back(3);
+        dyn.push_back(4);
+        fc.minimum(out ,dyn);
+        fc1.minimum(out1, dyn);
+        fc2.minimum(out2, dyn);
 
         REQUIRE(out.str() == "MIN: 2.2\n");
-        REQUIRE(out1.str() == "Column contains only NULL!\n");
+        REQUIRE(out1.str() == "Values contain only NULL!\n");
         REQUIRE(out2.str() == "EMPTY COLUMN - no MIN value!\n");
 
         delete flov5;
@@ -1673,7 +1721,9 @@ TEST_CASE("String column tests")
         sc.insert(strv5);
 
         std::stringstream out;
-        sc.sum(out);
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+        sc.sum(out, dyn);
 
         REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
 
@@ -1688,7 +1738,9 @@ TEST_CASE("String column tests")
         sc.insert(strv5);
 
         std::stringstream out;
-        sc.product(out);
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+        sc.product(out, dyn);
 
         REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
 
@@ -1703,7 +1755,9 @@ TEST_CASE("String column tests")
         sc.insert(strv5);
 
         std::stringstream out;
-        sc.maximum(out);
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+        sc.maximum(out, dyn);
 
         REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
 
@@ -1718,7 +1772,9 @@ TEST_CASE("String column tests")
         sc.insert(strv5);
 
         std::stringstream out;
-        sc.minimum(out);
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+        sc.minimum(out, dyn);
 
         REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
 
@@ -2239,21 +2295,13 @@ TEST_CASE("Table tests")
 
         std::stringstream out;
 
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+
         values[0] = intv1;
         values[1] = strv1;
         values[2] = flov1;
         table1.insertRow(values);
-
-        table1.sum(out, 0);
-        REQUIRE(out.str() == "SUM OF COLUMN: 1\n");
-        out=std::stringstream();
-        table1.sum(out, 1);
-        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
-        out=std::stringstream();
-        table1.sum(out, 2);
-        REQUIRE(out.str() == "SUM OF COLUMN: 5.6\n");
-        out=std::stringstream();
-
         values[0] = intv2;
         values[1] = strv2;
         values[2] = flov2;
@@ -2267,13 +2315,27 @@ TEST_CASE("Table tests")
         values[2] = flov4;
         table1.insertRow(values);
 
-        table1.sum(out, 0);
-        REQUIRE(out.str() == "SUM OF COLUMN: 10\n");
+        table1.sum(out, 0, dyn);
+        REQUIRE(out.str() == "SUM OF COLUMN: 1\n");
         out=std::stringstream();
-        table1.sum(out, 1);
+        table1.sum(out, 1, dyn);
         REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
         out=std::stringstream();
-        table1.sum(out, 2);
+        table1.sum(out, 2, dyn);
+        REQUIRE(out.str() == "SUM OF COLUMN: 5.6\n");
+        out=std::stringstream();
+
+        dyn.push_back(1);
+        dyn.push_back(2);
+        dyn.push_back(3);
+
+        table1.sum(out, 0, dyn);
+        REQUIRE(out.str() == "SUM OF COLUMN: 10\n");
+        out=std::stringstream();
+        table1.sum(out, 1, dyn);
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+        out=std::stringstream();
+        table1.sum(out, 2, dyn);
         REQUIRE(out.str() == "SUM OF COLUMN: 7.2\n");
         out=std::stringstream();
 
@@ -2317,21 +2379,13 @@ TEST_CASE("Table tests")
 
         std::stringstream out;
 
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+
         values[0] = intv1;
         values[1] = strv1;
         values[2] = flov1;
         table1.insertRow(values);
-
-        table1.product(out, 0);
-        REQUIRE(out.str() == "PRODUCT OF COLUMN: 1\n");
-        out=std::stringstream();
-        table1.product(out, 1);
-        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
-        out=std::stringstream();
-        table1.product(out, 2);
-        REQUIRE(out.str() == "PRODUCT OF COLUMN: 5.6\n");
-        out=std::stringstream();
-
         values[0] = intv2;
         values[1] = strv2;
         values[2] = flov2;
@@ -2345,13 +2399,27 @@ TEST_CASE("Table tests")
         values[2] = flov4;
         table1.insertRow(values);
 
-        table1.product(out, 0);
-        REQUIRE(out.str() == "PRODUCT OF COLUMN: 24\n");
+        table1.product(out, 0, dyn);
+        REQUIRE(out.str() == "PRODUCT OF COLUMN: 1\n");
         out=std::stringstream();
-        table1.product(out, 1);
+        table1.product(out, 1, dyn);
         REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
         out=std::stringstream();
-        table1.product(out, 2);
+        table1.product(out, 2, dyn);
+        REQUIRE(out.str() == "PRODUCT OF COLUMN: 5.6\n");
+        out=std::stringstream();
+
+        dyn.push_back(1);
+        dyn.push_back(2);
+        dyn.push_back(3);
+
+        table1.product(out, 0, dyn);
+        REQUIRE(out.str() == "PRODUCT OF COLUMN: 24\n");
+        out=std::stringstream();
+        table1.product(out, 1, dyn);
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+        out=std::stringstream();
+        table1.product(out, 2, dyn);
         REQUIRE(out.str() == "PRODUCT OF COLUMN: -1202.07\n");
         out=std::stringstream();
 
@@ -2395,21 +2463,13 @@ TEST_CASE("Table tests")
 
         std::stringstream out;
 
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+
         values[0] = intv1;
         values[1] = strv1;
         values[2] = flov1;
         table1.insertRow(values);
-
-        table1.maximum(out, 0);
-        REQUIRE(out.str() == "MAX: 1\n");
-        out=std::stringstream();
-        table1.maximum(out, 1);
-        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
-        out=std::stringstream();
-        table1.maximum(out, 2);
-        REQUIRE(out.str() == "MAX: 5.6\n");
-        out=std::stringstream();
-
         values[0] = intv2;
         values[1] = strv2;
         values[2] = flov2;
@@ -2423,13 +2483,27 @@ TEST_CASE("Table tests")
         values[2] = flov4;
         table1.insertRow(values);
 
-        table1.maximum(out, 0);
-        REQUIRE(out.str() == "MAX: 4\n");
+        table1.maximum(out, 0, dyn);
+        REQUIRE(out.str() == "MAX: 1\n");
         out=std::stringstream();
-        table1.maximum(out, 1);
+        table1.maximum(out, 1, dyn);
         REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
         out=std::stringstream();
-        table1.maximum(out, 2);
+        table1.maximum(out, 2, dyn);
+        REQUIRE(out.str() == "MAX: 5.6\n");
+        out=std::stringstream();
+
+        dyn.push_back(1);
+        dyn.push_back(2);
+        dyn.push_back(3);
+
+        table1.maximum(out, 0, dyn);
+        REQUIRE(out.str() == "MAX: 4\n");
+        out=std::stringstream();
+        table1.maximum(out, 1, dyn);
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+        out=std::stringstream();
+        table1.maximum(out, 2, dyn);
         REQUIRE(out.str() == "MAX: 8.6\n");
         out=std::stringstream();
 
@@ -2473,21 +2547,13 @@ TEST_CASE("Table tests")
 
         std::stringstream out;
 
+        DynamicArray<int> dyn;
+        dyn.push_back(0);
+
         values[0] = intv1;
         values[1] = strv1;
         values[2] = flov1;
         table1.insertRow(values);
-
-        table1.minimum(out, 0);
-        REQUIRE(out.str() == "MIN: 1\n");
-        out=std::stringstream();
-        table1.minimum(out, 1);
-        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
-        out=std::stringstream();
-        table1.minimum(out, 2);
-        REQUIRE(out.str() == "MIN: 5.6\n");
-        out=std::stringstream();
-
         values[0] = intv2;
         values[1] = strv2;
         values[2] = flov2;
@@ -2501,13 +2567,27 @@ TEST_CASE("Table tests")
         values[2] = flov4;
         table1.insertRow(values);
 
-        table1.minimum(out, 0);
+        table1.minimum(out, 0, dyn);
         REQUIRE(out.str() == "MIN: 1\n");
         out=std::stringstream();
-        table1.minimum(out, 1);
+        table1.minimum(out, 1, dyn);
         REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
         out=std::stringstream();
-        table1.minimum(out, 2);
+        table1.minimum(out, 2, dyn);
+        REQUIRE(out.str() == "MIN: 5.6\n");
+        out=std::stringstream();
+
+        dyn.push_back(1);
+        dyn.push_back(2);
+        dyn.push_back(3);
+
+        table1.minimum(out, 0, dyn);
+        REQUIRE(out.str() == "MIN: 1\n");
+        out=std::stringstream();
+        table1.minimum(out, 1, dyn);
+        REQUIRE(out.str() == "Operation is not supported for nonnumerical columns.\n");
+        out=std::stringstream();
+        table1.minimum(out, 2, dyn);
         REQUIRE(out.str() == "MIN: -9.6\n");
         out=std::stringstream();
 

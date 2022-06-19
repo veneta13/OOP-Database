@@ -62,10 +62,10 @@ public:
     void showPage(std::ostream& out, int pageSize, int currentPage) const;
     void showPage(std::ostream& out, DynamicArray<int> &indexes) const;
 
-    void sum(std::ostream& out, int columnIndex) const;
-    void product(std::ostream& out, int columnIndex) const;
-    void maximum(std::ostream& out, int columnIndex) const;
-    void minimum(std::ostream& out, int columnIndex) const;
+    void sum(std::ostream& out, int columnIndex, DynamicArray<int> &indexes) const;
+    void product(std::ostream& out, int columnIndex, DynamicArray<int> &indexes) const;
+    void maximum(std::ostream& out, int columnIndex, DynamicArray<int> &indexes) const;
+    void minimum(std::ostream& out, int columnIndex, DynamicArray<int> &indexes) const;
 
     friend std::ostream& operator<<(std::ostream& out, Table const& table);
 };

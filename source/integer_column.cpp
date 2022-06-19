@@ -190,28 +190,38 @@ int IntegerColumn::size() const {
 }
 
 
-void IntegerColumn::sum(std::ostream& out) {
+void IntegerColumn::sum(std::ostream& out, DynamicArray<int>& indexes) {
+    if (count < 1) {
+        out << "SUM OF COLUMN: 0\n";
+        return;
+    }
+
     int sum = 0;
-    for (int i = 0; i < count; i++) {
-        if (typeid(*elements[i]) == typeid(NullValue&)) { continue; }
-        sum = *dynamic_cast<IntegerValue*>(elements[i]) + sum;
+    for (int i = 0; i < indexes.size(); i++) {
+        if (typeid(*elements[indexes[i]]) == typeid(NullValue&)) { continue; }
+        sum = *dynamic_cast<IntegerValue*>(elements[indexes[i]]) + sum;
     }
     out << "SUM OF COLUMN: " << sum << "\n";
 }
 
 
-void IntegerColumn::product(std::ostream& out) {
+void IntegerColumn::product(std::ostream& out, DynamicArray<int>& indexes) {
+    if (count < 1) {
+        out << "PRODUCT OF COLUMN: 0\n";
+        return;
+    }
+
     int prod = 1;
-    for (int i = 0; i < count; i++) {
-        if (typeid(*elements[i]) == typeid(NullValue&)) { continue; }
-        prod = *dynamic_cast<IntegerValue*>(elements[i]) * prod;
+    for (int i = 0; i < indexes.size(); i++) {
+        if (typeid(*elements[indexes[i]]) == typeid(NullValue&)) { continue; }
+        prod = *dynamic_cast<IntegerValue*>(elements[indexes[i]]) * prod;
     }
     out << "PRODUCT OF COLUMN: " << prod << "\n";
 }
 
 
-void IntegerColumn::maximum(std::ostream& out) {
-    if (count == 0) {
+void IntegerColumn::maximum(std::ostream& out, DynamicArray<int>& indexes) {
+    if (count < 1) {
         out << "EMPTY COLUMN - no MAX value!\n";
         return;
     }
@@ -219,29 +229,29 @@ void IntegerColumn::maximum(std::ostream& out) {
     int max;
     bool found = false;
 
-    for (int i = 0; i < count; i++) {
-        if (typeid(*elements[i]) == typeid(NullValue&)) { continue; }
-        max = dynamic_cast<IntegerValue*>(elements[i])->get();
+    for (int i = 0; i < indexes.size(); i++) {
+        if (typeid(*elements[indexes[i]]) == typeid(NullValue&)) { continue; }
+        max = dynamic_cast<IntegerValue*>(elements[indexes[i]])->get();
         found = true;
         break;
     }
 
     if (!found) {
-        out << "Column contains only NULL!\n";
+        out << "Values contain only NULL!\n";
         return;
     }
 
-    for (int i = 0; i < count; i++) {
-        if (typeid(*elements[i]) == typeid(NullValue&)) { continue; }
-        int current = dynamic_cast<IntegerValue*>(elements[i])->get();
+    for (int i = 0; i < indexes.size(); i++) {
+        if (typeid(*elements[indexes[i]]) == typeid(NullValue&)) { continue; }
+        int current = dynamic_cast<IntegerValue*>(elements[indexes[i]])->get();
         if (max < current) { max = current; }
     }
 
     out << "MAX: " << max << "\n";
 }
 
-void IntegerColumn::minimum(std::ostream& out) {
-    if (count == 0) {
+void IntegerColumn::minimum(std::ostream& out, DynamicArray<int>& indexes) {
+    if (count < 1) {
         out << "EMPTY COLUMN - no MIN value!\n";
         return;
     }
@@ -249,21 +259,21 @@ void IntegerColumn::minimum(std::ostream& out) {
     int min;
     bool found = false;
 
-    for (int i = 0; i < count; i++) {
-        if (typeid(*elements[i]) == typeid(NullValue&)) { continue; }
-        min = dynamic_cast<IntegerValue*>(elements[i])->get();
+    for (int i = 0; i < indexes.size(); i++) {
+        if (typeid(*elements[indexes[i]]) == typeid(NullValue&)) { continue; }
+        min = dynamic_cast<IntegerValue*>(elements[indexes[i]])->get();
         found = true;
         break;
     }
 
     if (!found) {
-        out << "Column contains only NULL!\n";
+        out << "Values contain only NULL!\n";
         return;
     }
 
-    for (int i = 0; i < count; i++) {
-        if (typeid(*elements[i]) == typeid(NullValue&)) { continue; }
-        int current = dynamic_cast<IntegerValue*>(elements[i])->get();
+    for (int i = 0; i < indexes.size(); i++) {
+        if (typeid(*elements[indexes[i]]) == typeid(NullValue&)) { continue; }
+        int current = dynamic_cast<IntegerValue*>(elements[indexes[i]])->get();
         if (min > current) { min = current; }
     }
 

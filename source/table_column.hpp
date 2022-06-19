@@ -59,20 +59,28 @@ public:
     virtual int countValue(Value* value) = 0;
 
 
-    /// Print the sum of all elements of the column
-    virtual void sum(std::ostream& out) = 0;
+    /// Print the sum of chosen elements
+    /// \param out stream to input result in
+    /// \param indexes indexes of elements to calculate
+    virtual void sum(std::ostream& out, DynamicArray<int>& indexes) = 0;
 
 
-    /// Print the product of all elements of the column
-    virtual void product(std::ostream& out) = 0;
+    /// Print the product of chosen elements
+    /// \param out stream to input result in
+    /// \param indexes indexes of elements to calculate
+    virtual void product(std::ostream& out, DynamicArray<int>& indexes) = 0;
 
 
-    /// Print the maximal element of the column
-    virtual void maximum(std::ostream& out) = 0;
+    /// Print the maximal element
+    /// \param out stream to input result in
+    /// \param indexes indexes to search within
+    virtual void maximum(std::ostream& out, DynamicArray<int>& indexes) = 0;
 
 
-    /// Print the minimal element of the column
-    virtual void minimum(std::ostream& out) = 0;
+    /// Print the minimal element
+    /// \param out stream to input result in
+    /// \param indexes indexes to search within
+    virtual void minimum(std::ostream& out, DynamicArray<int>& indexes) = 0;
 
 
     /// Get the type of the column

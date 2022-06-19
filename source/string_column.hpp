@@ -40,10 +40,10 @@ public:
     ColumnType columnType() override;
     int size() const override;
 
-    void sum(std::ostream& out) override;
-    void product(std::ostream& out) override;
-    void maximum(std::ostream& out) override;
-    void minimum(std::ostream& out) override;
+    void sum(std::ostream &out, DynamicArray<int> &indexes) override;
+    void product(std::ostream &out, DynamicArray<int> &indexes) override;
+    void maximum(std::ostream &out, DynamicArray<int> &indexes) override;
+    void minimum(std::ostream &out, DynamicArray<int> &indexes) override;
 
     void print(std::ostream &out, int index) override;
     void print(std::ostream &out, int index, int width) override;

@@ -377,39 +377,40 @@ void Table::showPage(std::ostream &out, DynamicArray<int> &indexes) const {
     }
 }
 
-/// Print the sum of the column
+/// Print sum
 /// \param out stream to input answer into
-/// \param columnIndex index of the column to calculate
-void Table::sum(std::ostream &out, int columnIndex) const {
+/// \param columnIndex index of the column to calculate for
+/// \param indexes indexes of rows to calculate for
+void Table::sum(std::ostream &out, int columnIndex, DynamicArray<int> &indexes) const {
     checkColumnIndex(columnIndex);
-    columns[columnIndex]->sum(out);
+    columns[columnIndex]->sum(out, indexes);
 }
 
 
-/// Print the product of the column
-/// \param out stream to input answer into
-/// \param columnIndex index of the column to calculate
-void Table::product(std::ostream &out, int columnIndex) const {
+/// Print product
+/// \param columnIndex index of the column to calculate for
+/// \param indexes indexes of rows to calculate for
+void Table::product(std::ostream &out, int columnIndex, DynamicArray<int> &indexes) const {
     checkColumnIndex(columnIndex);
-    columns[columnIndex]->product(out);
+    columns[columnIndex]->product(out, indexes);
 }
 
 
-/// Print the max of the column
-/// \param out stream to input answer into
-/// \param columnIndex index of the column to calculate
-void Table::maximum(std::ostream &out, int columnIndex) const {
+/// Print maximal value
+/// \param columnIndex index of the column to calculate for
+/// \param indexes indexes of rows to calculate for
+void Table::maximum(std::ostream &out, int columnIndex, DynamicArray<int> &indexes) const {
     checkColumnIndex(columnIndex);
-    columns[columnIndex]->maximum(out);
+    columns[columnIndex]->maximum(out, indexes);
 }
 
 
-/// Print the min of the column
+/// Print minimal value
 /// \param out stream to input answer into
 /// \param columnIndex index of the column to calculate
-void Table::minimum(std::ostream &out, int columnIndex) const {
+void Table::minimum(std::ostream &out, int columnIndex, DynamicArray<int> &indexes) const {
     checkColumnIndex(columnIndex);
-    columns[columnIndex]->minimum(out);
+    columns[columnIndex]->minimum(out, indexes);
 }
 
 

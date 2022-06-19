@@ -190,58 +190,68 @@ int FloatColumn::size() const {
 }
 
 
-void FloatColumn::sum(std::ostream& out) {
+void FloatColumn::sum(std::ostream& out, DynamicArray<int>& indexes) {
+    if (count < 1) {
+        out << "SUM OF COLUMN: 0\n";
+        return;
+    }
+
     double sum = 0;
-    for (int i = 0; i < count; i++) {
-        if (typeid(*elements[i]) == typeid(NullValue&)) { continue; }
-        sum = *dynamic_cast<FloatValue*>(elements[i]) + sum;
+    for (int i = 0; i < indexes.size(); i++) {
+        if (typeid(*elements[indexes[i]]) == typeid(NullValue&)) { continue; }
+        sum = *dynamic_cast<FloatValue*>(elements[indexes[i]]) + sum;
     }
     out << "SUM OF COLUMN: " << sum << "\n";
 }
 
 
-void FloatColumn::product(std::ostream& out) {
+void FloatColumn::product(std::ostream& out, DynamicArray<int>& indexes) {
+    if (count < 1) {
+        out << "PRODUCT OF COLUMN: 0\n";
+        return;
+    }
+
     double prod = 1;
-    for (int i = 0; i < count; i++) {
-        if (typeid(*elements[i]) == typeid(NullValue&)) { continue; }
-        prod = *dynamic_cast<FloatValue*>(elements[i]) * prod;
+    for (int i = 0; i < indexes.size(); i++) {
+        if (typeid(*elements[indexes[i]]) == typeid(NullValue&)) { continue; }
+        prod = *dynamic_cast<FloatValue*>(elements[indexes[i]]) * prod;
     }
     out << "PRODUCT OF COLUMN: " << prod << "\n";
 }
 
 
-void FloatColumn::maximum(std::ostream& out) {
-    if (count == 0) {
+void FloatColumn::maximum(std::ostream& out, DynamicArray<int>& indexes) {
+    double max;
+    bool found = false;
+
+    if (count < 1) {
         out << "EMPTY COLUMN - no MAX value!\n";
         return;
     }
 
-    double max;
-    bool found = false;
-
-    for (int i = 0; i < count; i++) {
-        if (typeid(*elements[i]) == typeid(NullValue&)) { continue; }
-        max = dynamic_cast<FloatValue*>(elements[i])->get();
+    for (int i = 0; i < indexes.size(); i++) {
+        if (typeid(*elements[indexes[i]]) == typeid(NullValue&)) { continue; }
+        max = dynamic_cast<FloatValue*>(elements[indexes[i]])->get();
         found = true;
         break;
     }
 
     if (!found) {
-        out << "Column contains only NULL!\n";
+        out << "Values contain only NULL!\n";
         return;
     }
 
-    for (int i = 0; i < count; i++) {
-        if (typeid(*elements[i]) == typeid(NullValue&)) { continue; }
-        double current = dynamic_cast<FloatValue*>(elements[i])->get();
+    for (int i = 0; i < indexes.size(); i++) {
+        if (typeid(*elements[indexes[i]]) == typeid(NullValue&)) { continue; }
+        double current = dynamic_cast<FloatValue*>(elements[indexes[i]])->get();
         if (max < current) { max = current; }
     }
 
     out << "MAX: " << max << "\n";
 }
 
-void FloatColumn::minimum(std::ostream& out) {
-    if (count == 0) {
+void FloatColumn::minimum(std::ostream& out, DynamicArray<int>& indexes) {
+    if (count < 1) {
         out << "EMPTY COLUMN - no MIN value!\n";
         return;
     }
@@ -249,21 +259,21 @@ void FloatColumn::minimum(std::ostream& out) {
     double min;
     bool found = false;
 
-    for (int i = 0; i < count; i++) {
-        if (typeid(*elements[i]) == typeid(NullValue&)) { continue; }
-        min = dynamic_cast<FloatValue*>(elements[i])->get();
+    for (int i = 0; i < indexes.size(); i++) {
+        if (typeid(*elements[indexes[i]]) == typeid(NullValue&)) { continue; }
+        min = dynamic_cast<FloatValue*>(elements[indexes[i]])->get();
         found = true;
         break;
     }
 
     if (!found) {
-        out << "Column contains only NULL!\n";
+        out << "Values contain only NULL!\n";
         return;
     }
 
-    for (int i = 0; i < count; i++) {
-        if (typeid(*elements[i]) == typeid(NullValue&)) { continue; }
-        double current = dynamic_cast<FloatValue*>(elements[i])->get();
+    for (int i = 0; i < indexes.size(); i++) {
+        if (typeid(*elements[indexes[i]]) == typeid(NullValue&)) { continue; }
+        double current = dynamic_cast<FloatValue*>(elements[indexes[i]])->get();
         if (min > current) { min = current; }
     }
 
