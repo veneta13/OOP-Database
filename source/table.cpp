@@ -326,13 +326,11 @@ void Table::deleteElement(int columnIndex, Value *value) {
 
 /// Update table column values
 /// \param columnIndex index of the column to update
-/// \param oldValue value to update
-/// \param newValue new value
-void Table::updateElements(int columnIndex, Value *oldValue, Value *newValue) {
+/// \param value value to update
+/// \param indexes indexes to update at
+void Table::updateElements(int columnIndex, Value *value, DynamicArray<int>& indexes) {
     checkColumnIndex(columnIndex);
-    DynamicArray<int> indexes;
-    columns[columnIndex]->select(oldValue, indexes);
-    columns[columnIndex]->update(indexes, newValue);
+    columns[columnIndex]->update(indexes, value);
 }
 
 

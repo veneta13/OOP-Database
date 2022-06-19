@@ -55,7 +55,7 @@ public:
 
     void selectElement(int columnIndex, DynamicArray<int>& indexes, Value* value) const;
     void deleteElement(int columnIndex, Value* value);
-    void updateElements(int columnIndex, Value* oldValue, Value* newValue);
+    void updateElements(int columnIndex, Value* value, DynamicArray<int>& indexes);
 
     int countRows(int columnIndex, Value* value) const;
 
