@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include "../source/table.hpp"
+#include "../source/database.hpp"
 
 TEST_CASE("Dynamic array tests")
 {
@@ -1888,6 +1888,30 @@ TEST_CASE("Table tests")
         table.setFile("dummy1.txt");
         REQUIRE(table.getName() == nullptr);
         REQUIRE(strcmp(table.getFile(), "dummy1.txt") == 0);
+    }
+
+    SECTION("Describe")
+    {
+        Table table1("first table");
+        Table table2("second table");
+
+        table1.addColumn(ColumnType::Integer);
+        table1.addColumn(ColumnType::String);
+        table1.addColumn(ColumnType::Integer);
+
+        table2.addColumn(ColumnType::Integer);
+        table2.addColumn(ColumnType::String);
+        table2.addColumn(ColumnType::String);
+        table2.addColumn(ColumnType::Integer);
+
+        std::stringstream out;
+
+        table1.describe(out);
+        REQUIRE(out.str() == "COLUMN TYPES:\n0 - Integer\n1 - String\n2 - Integer\n");
+
+        out = std::stringstream();
+        table2.describe(out);
+        REQUIRE(out.str() == "COLUMN TYPES:\n0 - Integer\n1 - String\n2 - String\n3 - Integer\n");
     }
 
     SECTION("Insert column")

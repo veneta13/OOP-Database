@@ -47,6 +47,8 @@ public:
     void setFile(char const* _file);
     char* getFile() const;
 
+    void describe(std::ostream& out);
+
     void addColumn(ColumnType type);
     void insertRow(Value** values);
     Value** getRow(int index) const;

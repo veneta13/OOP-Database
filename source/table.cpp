@@ -236,6 +236,27 @@ char *Table::getFile() const {
 }
 
 
+/// Output the types of the table columns
+/// \param out
+void Table::describe(std::ostream& out) {
+    out << "COLUMN TYPES:\n";
+    for (int i = 0; i < columnCount; i++) {
+        out << i << " - ";
+        switch (columns[i]->columnType()) {
+            case Integer:
+                out << "Integer\n";
+                break;
+            case FloatingPoint:
+                out << "Floating Point\n";
+                break;
+            case String:
+                out << "String\n";
+                break;
+        }
+    }
+}
+
+
 /// Add new empty column to the table
 /// \param type type of the column
 void Table::addColumn(ColumnType type) {
