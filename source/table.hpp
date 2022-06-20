@@ -62,7 +62,7 @@ public:
     Table* innerJoin(Table const& other, int columnTable1, int columnTable2) const;
 
     void showPage(std::ostream& out, int pageSize, int currentPage) const;
-    void showPage(std::ostream& out, DynamicArray<int> &indexes) const;
+    void showPage(std::ostream& out, DynamicArray<int> &indexes, int pageSize, int currentPage) const;
 
     void sum(std::ostream& out, int columnIndex, DynamicArray<int> &indexes) const;
     void product(std::ostream& out, int columnIndex, DynamicArray<int> &indexes) const;

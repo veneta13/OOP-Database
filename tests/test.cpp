@@ -2120,7 +2120,7 @@ TEST_CASE("Table tests")
 
     SECTION("Update")
     {
-        DynamicArray<int> indexes;
+        DynamicArray<int> indexes, inputIndexes;
 
         IntegerValue *intv1 = new IntegerValue(5);
         IntegerValue *intv2 = new IntegerValue(6);
@@ -2143,26 +2143,22 @@ TEST_CASE("Table tests")
         table.insertRow(values1);
         table.insertRow(values2);
 
+        inputIndexes.push_back(0);
+        inputIndexes.push_back(1);
+
         table.selectElement(0, indexes, intv1);
         REQUIRE(indexes.size() == 1);
         REQUIRE(indexes[0] == 0);
 
-        table.updateElements(0, intv1, intv2);
+        table.updateElements(0, intv2, inputIndexes);
         table.selectElement(0, indexes, intv1);
         REQUIRE(indexes.size() == 1);
         REQUIRE(indexes[0] == 0);
+
         table.selectElement(0, indexes, intv2);
         REQUIRE(indexes.size() == 3);
         REQUIRE(indexes[1] == 0);
         REQUIRE(indexes[2] == 1);
-
-        table.updateElements(1, strv, nullv);
-        table.selectElement(1, indexes, strv);
-        REQUIRE(indexes.size() == 3);
-        table.selectElement(1, indexes, nullv);
-        REQUIRE(indexes.size() == 5);
-        REQUIRE(indexes[3] == 0);
-        REQUIRE(indexes[4] == 1);
 
         delete intv1;
         delete intv2;
@@ -2675,20 +2671,31 @@ TEST_CASE("Table tests")
 
         DynamicArray<int> indexes;
         indexes.push_back(0);
-        table.showPage(out, indexes);
+        table.showPage(out, indexes, 5, 0);
         REQUIRE(out.str() == "|         0|         1|string dummy1|       5.6|\n");
         indexes.pop_back();
         out = std::stringstream();
 
         indexes.push_back(1);
-        table.showPage(out, indexes);
+        table.showPage(out, indexes, 1, 0);
         REQUIRE(out.str() == "|         1|         2|string dummy2|      -9.6|\n");
         out = std::stringstream();
 
-        indexes.push_back(0);
         table.showPage(out, 2, 0);
         REQUIRE(out.str() == "|         0|         1|string dummy1|       5.6|\n"
                              "|         1|         2|string dummy2|      -9.6|\n");
+        out = std::stringstream();
+
+        table.showPage(out, 0, 0);
+        REQUIRE(out.str() == "");
+        out = std::stringstream();
+
+        table.showPage(out, 1, -1);
+        REQUIRE(out.str() == "|         0|         1|string dummy1|       5.6|\n");
+        out = std::stringstream();
+
+        table.showPage(out, 1, 5);
+        REQUIRE(out.str() == "");
 
         delete intv1;
         delete intv2;

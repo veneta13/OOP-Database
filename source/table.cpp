@@ -195,6 +195,10 @@ void Table::join(Table*& table, int columnTable1, int columnTable2, Table const&
 /// \param out stream to input the row in
 /// \param index row index to print
 void Table::printRow(std::ostream &out, int index) const {
+    if (index > (rowCount - 1) || index < 0) {
+        return;
+    }
+
     out << "|" << std::setw(10) << index;
     for (int i = 0; i < columnCount; i++) {
         out << "|";
@@ -381,7 +385,10 @@ Table *Table::innerJoin(Table const &other, int columnTable1, int columnTable2) 
 /// \param pageSize number of rows on a page
 /// \param currentPage page currently displayed
 void Table::showPage(std::ostream &out, int pageSize, int currentPage) const {
-    for (int i = 0; i < pageSize; i++) {
+    currentPage = currentPage < 0 ? 0 : currentPage;
+    currentPage = (currentPage * pageSize) > rowCount ? currentPage - 1 : currentPage;
+    int counter = (pageSize * currentPage) > rowCount ? rowCount : pageSize;
+    for (int i = 0; i < counter; i++) {
         printRow(out, (pageSize * currentPage) + i);
     }
 }
@@ -390,11 +397,18 @@ void Table::showPage(std::ostream &out, int pageSize, int currentPage) const {
 /// Output a page
 /// \param out stream to insert in
 /// \param indexes rows to show
-void Table::showPage(std::ostream &out, DynamicArray<int> &indexes) const {
-    for (int i = 0; i < indexes.size(); i++) {
-        printRow(out, indexes[i]);
+/// \param pageSize number of rows on a page
+/// \param currentPage page currently displayed
+void Table::showPage(std::ostream &out, DynamicArray<int> &indexes, int pageSize, int currentPage) const {
+    currentPage = currentPage < 0 ? 0 : currentPage;
+    currentPage = (currentPage * pageSize) > rowCount ? currentPage - 1 : currentPage;
+    int counter = (pageSize * currentPage) > rowCount ? rowCount : pageSize;
+    counter = counter > indexes.size() ? indexes.size() : counter;
+    for (int i = 0; i < counter; i++) {
+        printRow(out, indexes[(pageSize * currentPage) + i]);
     }
 }
+
 
 /// Print sum
 /// \param out stream to input answer into
