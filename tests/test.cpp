@@ -2722,13 +2722,13 @@ TEST_CASE("Database tests")
 
     SECTION("Copy constructor")
     {
-        Table* table1 = new Table("first table");
-        Table* table2 = new Table("second table");
+        Table *table1 = new Table("first table");
+        Table *table2 = new Table("second table");
         table1->addColumn(ColumnType::Integer);
         table1->addColumn(ColumnType::String);
         table2->addColumn(ColumnType::FloatingPoint);
 
-        char const* result = "TABLES IN DATABASE:\n"
+        char const *result = "TABLES IN DATABASE:\n"
                              "first table\n"
                              "second table\n";
 
@@ -2747,13 +2747,13 @@ TEST_CASE("Database tests")
 
     SECTION("Operator =")
     {
-        Table* table1 = new Table("first table");
-        Table* table2 = new Table("second table");
+        Table *table1 = new Table("first table");
+        Table *table2 = new Table("second table");
         table1->addColumn(ColumnType::Integer);
         table1->addColumn(ColumnType::String);
         table2->addColumn(ColumnType::FloatingPoint);
 
-        char const* result = "TABLES IN DATABASE:\n"
+        char const *result = "TABLES IN DATABASE:\n"
                              "first table\n"
                              "second table\n";
 
@@ -2772,7 +2772,7 @@ TEST_CASE("Database tests")
 
     SECTION("Import and export tables")
     {
-        char const* file = "My table\n"
+        char const *file = "My table\n"
                            "3 2 1 2 3\n"
                            "-3\n"
                            "5.6\n"
@@ -2798,9 +2798,9 @@ TEST_CASE("Database tests")
     SECTION("Show tables")
     {
         Database db;
-        Table* table1 = new Table("table 1");
-        Table* table2 = new Table("table 2");
-        Table* table3 = new Table("table 3");
+        Table *table1 = new Table("table 1");
+        Table *table2 = new Table("table 2");
+        Table *table3 = new Table("table 3");
 
         db.addTable(table1);
         db.addTable(table2);
@@ -2818,15 +2818,15 @@ TEST_CASE("Database tests")
     SECTION("Describe")
     {
         Database db;
-        Table* table1 = new Table("table 1");
+        Table *table1 = new Table("table 1");
         table1->addColumn(ColumnType::Integer);
         table1->addColumn(ColumnType::String);
 
-        Table* table2 = new Table("table 2");
+        Table *table2 = new Table("table 2");
         table2->addColumn(ColumnType::String);
         table2->addColumn(ColumnType::FloatingPoint);
 
-        Table* table3 = new Table("table 3");
+        Table *table3 = new Table("table 3");
 
         db.addTable(table1);
         db.addTable(table2);
@@ -2850,7 +2850,7 @@ TEST_CASE("Database tests")
     }
 
     SECTION("Print by pages") {
-        char const* file = "My table\n"
+        char const *file = "My table\n"
                            "3 2 1 2 3\n"
                            "-3\n"
                            "5.6\n"
@@ -2874,8 +2874,8 @@ TEST_CASE("Database tests")
 
     SECTION("Select")
     {
-        Value* val4 = new IntegerValue(4);
-        char const* file = "My table\n"
+        Value *val4 = new IntegerValue(4);
+        char const *file = "My table\n"
                            "3 2 1 2 3\n"
                            "-3\n"
                            "5.6\n"
@@ -2899,9 +2899,9 @@ TEST_CASE("Database tests")
 
     SECTION("Update")
     {
-        Value* val4 = new IntegerValue(4);
-        Value* null = new NullValue();
-        char const* file = "My table\n"
+        Value *val4 = new IntegerValue(4);
+        Value *null = new NullValue();
+        char const *file = "My table\n"
                            "3 2 1 2 3\n"
                            "-3\n"
                            "5.6\n"
@@ -2927,6 +2927,33 @@ TEST_CASE("Database tests")
 
         delete val4;
         delete null;
+    }
+
+    SECTION("Delete")
+    {
+        Value *val4 = new IntegerValue(4);
+        char const *file = "My table\n"
+                           "3 2 1 2 3\n"
+                           "-3\n"
+                           "5.6\n"
+                           "\"My string\"\"\n"
+                           "4\n"
+                           "-5.6\n"
+                           "\"My string 2\"\"\n";
+        std::stringstream out, filestr(file);
+        Database db;
+        db.importTable(filestr);
+
+        REQUIRE(db.deleteRows("My table", 0, val4));
+
+        db.exportTable(out, "My table");
+        REQUIRE(out.str() == "My table\n"
+                             "3 1 1 2 3\n"
+                             "-3\n"
+                             "5.6\n"
+                             "\"My string\"\"\n");
+
+        delete val4;
     }
 }
 

@@ -97,7 +97,7 @@ int Database::getTableByName(const char *name) {
 /// \param rows number of rows
 void Database::readRows(std::istream& in, Table* table, int columns, int rows) {
     for (int i = 0; i < rows; i++) {
-        Value** values = new Value*[rows];
+        Value** values = new Value*[columns];
         std::string line;
 
         for (int j = 0; j < columns; j++) {
