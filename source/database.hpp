@@ -13,11 +13,22 @@ enum Operations{
 
 /// Represents the whole database
 class Database {
+    /// Number of tables in the database
+    int count;
+
+    /// The max number of tables that can be saved in the database currently
+    int capacity;
 
     /// The tables in the database
     Table** tables;
 
     int getTableByName(const char* name);
+    void clear();
+    void expand();
+    void copy(Database const &other);
+    bool addTable(Table* table);
+    void transformString(std::string& input);
+    void readRows(std::istream& in, Table* table, int columns, int rows);
 
 public:
     Database();
@@ -29,20 +40,21 @@ public:
     bool exportTable(std::ostream& out, const char* tableName);
 
     void showTables(std::ostream& out);
-    void describe(std::ostream& out, int tableIndex);
-    void printByPages(std::ostream& out, std::istream& in);
+    bool describe(std::ostream& out, const char* tableName);
+    bool printByPages(std::ostream& out, std::istream& in, const char* tableName);
 
-    void select(std::ostream& out, const char* tableName, int columnIndex);
-    int count(const char* tableName, int columnIndex, Value* value);
+    bool select(std::ostream& out, std::istream& in, const char* tableName, int columnIndex, Value* value);
 
-    void update(const char* tableName, int searchCol, Value* searchVal, int replaceCol, Value* replaceVal);
-    void deleteRows(const char* tableName, int columnIndex, Value* value);
-    void insert(const char* tableName, Value** values);
+    bool update(const char* tableName, int searchCol, Value* searchVal, int replaceCol, Value* replaceVal);
+    bool deleteRows(const char* tableName, int columnIndex, Value* value);
 
-    void innerJoin(const char* table1, int column1, const char* table2, int column2);
-    void aggregate(std::ostream& out, const char* tableName, int searchCol, int aggregCol, Operations operation);
+    bool insert(const char* tableName, Value** values);
+    bool addColumn(std::istream& in, std::ostream& out,const char* tableName);
 
-    void rename(const char* oldName, const char* newName);
+    bool innerJoin(std::ostream& out, const char* table1, int column1, const char* table2, int column2);
+    bool aggregate(std::ostream& out, const char* tableName, int searchCol, Value* value, int aggregCol, Operations operation);
+
+    bool rename(const char* oldName, const char* newName);
 };
 
 
