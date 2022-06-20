@@ -227,6 +227,7 @@ void Executor::close(std::ostream &out, std::istream &in) {
         database = nullptr;
     }
     isSaved = true;
+    out << "File closed successfully!\n";
 }
 
 
@@ -339,7 +340,12 @@ void Executor::export_(std::ostream &out, std::istream &in) {
         return;
     }
 
-    database->exportTable(file, strTable.c_str());
+    if (database->exportTable(file, strTable.c_str())) {
+        out << "Table exported!\n";
+    }
+    else {
+        out << "Table not exported!\n";
+    }
 
     file.close();
 }
@@ -355,9 +361,14 @@ void Executor::select(std::ostream &out, std::istream &in) {
     std::getline(in, str);
     out << "Enter the index of the column:\n";
     in >> column;
+
+    in.clear();
+    in.ignore();
     Value* value = readValue(out, in, database->getColumnType(str.c_str(), column));
 
-    database->select(out, in, str.c_str(), column, value);
+    if (!database->select(out, in, str.c_str(), column, value)) {
+        out << "Select failed!\n";
+    }
     delete value;
 }
 
@@ -370,7 +381,12 @@ void Executor::addcolumn(std::ostream &out, std::istream &in) {
     out << "Enter name of the table:\n";
     std::getline(in, str);
 
-    database->addColumn(in, out, str.c_str());
+    if (database->addColumn(in, out, str.c_str())) {
+        out << "Column added successfully!\n";
+    }
+    else {
+        out << "Column addition failed!\n";
+    }
     isSaved = false;
 }
 
@@ -395,7 +411,12 @@ void Executor::update(std::ostream &out, std::istream &in) {
     Value* valueS = readValue(out, in, database->getColumnType(strTable.c_str(), searchCol));
     Value* valueR = readValue(out, in, database->getColumnType(strTable.c_str(), replCol));
 
-    database->update(strTable.c_str(), searchCol, valueS, replCol, valueR);
+    if (database->update(strTable.c_str(), searchCol, valueS, replCol, valueR)) {
+        out << "Update successful!\n";
+    }
+    else {
+        out << "Update failed!\n";
+    }
     isSaved = false;
     delete valueR;
     delete valueS;
@@ -418,7 +439,12 @@ void Executor::delete_(std::ostream &out, std::istream &in) {
     Value* value = readValue(out, in, database->getColumnType(str.c_str(), column));
 
     isSaved = false;
-    database->deleteRows(str.c_str(), column, value);
+    if (database->deleteRows(str.c_str(), column, value)) {
+        out << "The rows were successfully deleted!\n";
+    }
+    else {
+        out << "There was an error deleting the rows!\n";
+    }
     delete value;
 }
 
