@@ -2896,6 +2896,38 @@ TEST_CASE("Database tests")
 
         delete val4;
     }
+
+    SECTION("Update")
+    {
+        Value* val4 = new IntegerValue(4);
+        Value* null = new NullValue();
+        char const* file = "My table\n"
+                           "3 2 1 2 3\n"
+                           "-3\n"
+                           "5.6\n"
+                           "\"My string\"\"\n"
+                           "4\n"
+                           "-5.6\n"
+                           "\"My string 2\"\"\n";
+        std::stringstream out, filestr(file);
+        Database db;
+        db.importTable(filestr);
+
+        REQUIRE(db.update("My table", 0, val4, 1, null));
+
+        db.exportTable(out, "My table");
+        REQUIRE(out.str() == "My table\n"
+                             "3 2 1 2 3\n"
+                             "-3\n"
+                             "5.6\n"
+                             "\"My string\"\"\n"
+                             "4\n"
+                             "NULL\n"
+                             "\"My string 2\"\"\n");
+
+        delete val4;
+        delete null;
+    }
 }
 
 #pragma clang diagnostic pop
