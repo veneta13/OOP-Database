@@ -2814,6 +2814,40 @@ TEST_CASE("Database tests")
                              "table 2\n"
                              "table 3\n");
     }
+
+    SECTION("Describe")
+    {
+        Database db;
+        Table* table1 = new Table("table 1");
+        table1->addColumn(ColumnType::Integer);
+        table1->addColumn(ColumnType::String);
+
+        Table* table2 = new Table("table 2");
+        table2->addColumn(ColumnType::String);
+        table2->addColumn(ColumnType::FloatingPoint);
+
+        Table* table3 = new Table("table 3");
+
+        db.addTable(table1);
+        db.addTable(table2);
+        db.addTable(table3);
+
+        std::stringstream out;
+        db.describe(out, "table 1");
+        REQUIRE(out.str() == "COLUMN TYPES:\n"
+                             "0 - Integer\n"
+                             "1 - String\n");
+        out = std::stringstream();
+
+        db.describe(out, "table 2");
+        REQUIRE(out.str() == "COLUMN TYPES:\n"
+                             "0 - String\n"
+                             "1 - Floating Point\n");
+        out = std::stringstream();
+
+        db.describe(out, "table 3");
+        REQUIRE(out.str() == "COLUMN TYPES:\n");
+    }
 }
 
 #pragma clang diagnostic pop
