@@ -73,7 +73,7 @@ void StringColumn::copy(StringColumn const &other) {
     clear();
     count = other.count;
     capacity = other.capacity;
-    elements = new Value*[capacity];
+    elements = new Value*[newCapacity];
     for (int i = 0; i < count; i++) {
         if (typeid(*other.elements[i]) == typeid(NullValue&)) {
             elements[i] = new NullValue();

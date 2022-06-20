@@ -107,7 +107,7 @@ void IntegerColumn::deleteByIndexes(DynamicArray<int>& indexes) {
     int newCapacity = (count - indexes.size()) * 2;
     int newCount = count;
 
-    Value** temp = new Value*[capacity];
+    Value** temp = new Value*[newCapacity];
 
     for (int i = 0; i < count; i++) {
         if (i == indexes[deletedCount]) {
