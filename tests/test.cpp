@@ -2955,6 +2955,57 @@ TEST_CASE("Database tests")
 
         delete val4;
     }
+
+    SECTION("Insert")
+    {
+        IntegerValue *intv1 = new IntegerValue(1);
+        IntegerValue *intv2 = new IntegerValue(2);
+        FloatValue *flov1 = new FloatValue(5.6);
+        FloatValue *flov2 = new FloatValue(-9.6);
+        StringValue *strv1 = new StringValue("string dummy1");
+        StringValue *strv2 = new StringValue("string dummy2");
+
+        Table* table = new Table("first table");
+
+        table->addColumn(ColumnType::Integer);
+        table->addColumn(ColumnType::String);
+        table->addColumn(ColumnType::FloatingPoint);
+
+        Database db;
+        REQUIRE(db.addTable(table));
+
+        Value **values = new Value *[3];
+
+        std::stringstream out;
+
+        values[0] = intv1;
+        values[1] = strv1;
+        values[2] = flov1;
+        db.insert("first table", values);
+
+        values[0] = intv2;
+        values[1] = strv2;
+        values[2] = flov2;
+        db.insert("first table", values);
+
+        db.exportTable(out, "first table");
+        REQUIRE(out.str() == "first table\n"
+                             "3 2 1 3 2\n"
+                             "1\n"
+                             "string dummy1\n"
+                             "5.6\n"
+                             "2\n"
+                             "string dummy2\n"
+                             "-9.6\n");
+
+        delete intv1;
+        delete intv2;
+        delete strv1;
+        delete strv2;
+        delete flov1;
+        delete flov2;
+        delete[] values;
+    }
 }
 
 #pragma clang diagnostic pop

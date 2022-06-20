@@ -73,7 +73,7 @@ void StringColumn::copy(StringColumn const &other) {
     clear();
     count = other.count;
     capacity = other.capacity;
-    elements = new Value*[newCapacity];
+    elements = new Value*[capacity];
     for (int i = 0; i < count; i++) {
         if (typeid(*other.elements[i]) == typeid(NullValue&)) {
             elements[i] = new NullValue();
@@ -107,7 +107,7 @@ void StringColumn::deleteByIndexes(DynamicArray<int>& indexes) {
     int newCapacity = (count - indexes.size()) * 2;
     int newCount = count;
 
-    Value** temp = new Value*[capacity];
+    Value** temp = new Value*[newCapacity];
 
     for (int i = 0; i < count; i++) {
         if (i == indexes[deletedCount]) {
