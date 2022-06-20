@@ -3096,7 +3096,7 @@ TEST_CASE("Database tests")
                              "2 - Integer\n"
                              "3 - String\n"
                              "4 - String\n"
-                             "5 - Integer");
+                             "5 - Integer\n");
 
         delete intv1;
         delete intv2;
@@ -3108,6 +3108,30 @@ TEST_CASE("Database tests")
         delete strv4;
         delete[] values3;
         delete[] values4;
+    }
+
+    SECTION("Rename")
+    {
+        Table* table1 = new Table("first table");
+        Table* table2 = new Table("second table");
+
+        Database db;
+        REQUIRE(db.addTable(table1));
+        REQUIRE(db.addTable(table2));
+
+        std::stringstream out;
+        db.showTables(out);
+        REQUIRE(out.str() == "TABLES IN DATABASE:\n"
+                             "first table\n"
+                             "second table\n");
+
+        REQUIRE(db.rename("first table", "third table"));
+
+        out = std::stringstream();
+        db.showTables(out);
+        REQUIRE(out.str() == "TABLES IN DATABASE:\n"
+                             "third table\n"
+                             "second table\n");
     }
 }
 
