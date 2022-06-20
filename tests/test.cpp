@@ -2794,6 +2794,26 @@ TEST_CASE("Database tests")
         db.exportTable(sstream, "My table");
         REQUIRE(sstream.str() == file);
     }
+
+    SECTION("Show tables")
+    {
+        Database db;
+        Table* table1 = new Table("table 1");
+        Table* table2 = new Table("table 2");
+        Table* table3 = new Table("table 3");
+
+        db.addTable(table1);
+        db.addTable(table2);
+        db.addTable(table3);
+
+        std::stringstream out;
+        db.showTables(out);
+
+        REQUIRE(out.str() == "TABLES IN DATABASE:\n"
+                             "table 1\n"
+                             "table 2\n"
+                             "table 3\n");
+    }
 }
 
 #pragma clang diagnostic pop
