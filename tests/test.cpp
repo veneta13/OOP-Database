@@ -3020,6 +3020,95 @@ TEST_CASE("Database tests")
         REQUIRE(out.str() == "COLUMN TYPES:\n"
                              "0 - Integer\n");
     }
+
+    SECTION("Inner join")
+    {
+        IntegerValue *intv1 = new IntegerValue(1);
+        IntegerValue *intv2 = new IntegerValue(2);
+        IntegerValue *intv3 = new IntegerValue(3);
+        IntegerValue *intv4 = new IntegerValue(4);
+        StringValue *strv1 = new StringValue("string dummy1");
+        StringValue *strv2 = new StringValue("string dummy2");
+        StringValue *strv3 = new StringValue("string dummy3");
+        StringValue *strv4 = new StringValue("string dummy4");
+
+        Table* table1 = new Table("first table");
+        Table* table2 = new Table("second table");
+
+        table1->addColumn(ColumnType::Integer);
+        table1->addColumn(ColumnType::String);
+        table1->addColumn(ColumnType::Integer);
+
+        table2->addColumn(ColumnType::Integer);
+        table2->addColumn(ColumnType::String);
+        table2->addColumn(ColumnType::String);
+        table2->addColumn(ColumnType::Integer);
+
+        Value **values3 = new Value *[3];
+        Value **values4 = new Value *[4];
+
+        values3[0] = intv1;
+        values3[1] = strv1;
+        values3[2] = intv3;
+        table1->insertRow(values3);
+        values3[0] = intv2;
+        values3[1] = strv3;
+        values3[2] = intv4;
+        table1->insertRow(values3);
+
+        values4[0] = intv1;
+        values4[1] = strv1;
+        values4[2] = strv3;
+        values4[3] = intv4;
+        table2->insertRow(values4);
+        values4[0] = intv1;
+        values4[1] = strv2;
+        values4[2] = strv3;
+        values4[3] = intv2;
+        table2->insertRow(values4);
+        values4[0] = intv3;
+        values4[1] = strv2;
+        values4[2] = strv4;
+        values4[3] = intv3;
+        table2->insertRow(values4);
+
+        Database db;
+        REQUIRE(db.addTable(table1));
+        REQUIRE(db.addTable(table2));
+
+        std::stringstream out;
+
+        REQUIRE(db.innerJoin(out, "first table", 0, "second table", 0));
+        REQUIRE(out.str() == "NAME OF JOINED TABLE: Joined table - first table & second table\n");
+
+        out = std::stringstream();
+        db.showTables(out);
+        REQUIRE(out.str() == "TABLES IN DATABASE:\n"
+                             "first table\n"
+                             "second table\n"
+                             "Joined table - first table & second table\n");
+
+        out = std::stringstream();
+        db.describe(out, "Joined table - first table & second table");
+        REQUIRE(out.str() == "COLUMN TYPES:\n"
+                             "0 - Integer\n"
+                             "1 - String\n"
+                             "2 - Integer\n"
+                             "3 - String\n"
+                             "4 - String\n"
+                             "5 - Integer");
+
+        delete intv1;
+        delete intv2;
+        delete intv3;
+        delete intv4;
+        delete strv1;
+        delete strv2;
+        delete strv3;
+        delete strv4;
+        delete[] values3;
+        delete[] values4;
+    }
 }
 
 #pragma clang diagnostic pop
