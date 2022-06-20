@@ -72,23 +72,8 @@ void Database::copy(Database const &other) {
     tables = new Table*[capacity];
 
     for (int i = 0; i < count; i++) {
-        tables[i] = other.tables[i];
+        tables[i] = new Table(*other.tables[i]);
     }
-}
-
-
-/// Add table to database
-/// \param table pointer to a table
-/// \return if the table was added successfully
-bool Database::addTable(Table* table) {
-    if (getTableByName(table->getName()) != -1) {
-        return false;
-    }
-
-    if (count == capacity) { expand(); }
-    tables[count] = table;
-    count++;
-    return true;
 }
 
 
@@ -105,27 +90,6 @@ int Database::getTableByName(const char *name) {
 }
 
 
-/// Transform string to fit task
-/// \param input string to transform
-void Database::transformString(std::string& input) {
-    input = input.substr(input.find('\"'), input.find_last_of('\"'));
-    int index = 0;
-    while (true) {
-        index = input.find('\"', index);
-        if (index == std::string::npos) { break; }
-        input.replace(index, 2, "\\\"");
-        index += 2;
-    }
-    index = 0;
-    while (true) {
-        index = input.find('\\', index);
-        if (index == std::string::npos) { break; }
-        input.replace(index, 2, "\\\\");
-        index += 2;
-    }
-}
-
-
 /// Read table rows from file
 /// \param in stream to read from
 /// \param table table to save in
@@ -134,29 +98,29 @@ void Database::transformString(std::string& input) {
 void Database::readRows(std::istream& in, Table* table, int columns, int rows) {
     for (int i = 0; i < rows; i++) {
         Value** values = new Value*[rows];
+        std::string line;
 
         for (int j = 0; j < columns; j++) {
-            if (table[j].getColumnType(j) == ColumnType::Integer) {
+            if (table->getColumnType(j) == ColumnType::Integer) {
                 int temp;
                 in >> temp;
-                values[i] = new IntegerValue(temp);
+                values[j] = new IntegerValue(temp);
+                std::getline(in, line);
             }
-            else if (table[j].getColumnType(j) == ColumnType::FloatingPoint) {
+            else if (table->getColumnType(j) == ColumnType::FloatingPoint) {
                 double temp;
                 in >> temp;
-                values[i] = new FloatValue(temp);
+                values[j] = new FloatValue(temp);
+                std::getline(in, line);
             }
             else {
-                std::string temp;
-                in >> temp;
-                if (temp == "NULL") {
-                    values[i] = new NullValue();
+                std::getline(in, line);
+                if (line == "NULL") {
+                    values[j] = new NullValue();
                 }
                 else {
-                    transformString(temp);
-                    values[i] = new StringValue(temp.c_str());
+                    values[j] = new StringValue(line.c_str());
                 }
-
             }
         }
 
@@ -173,12 +137,12 @@ void Database::readRows(std::istream& in, Table* table, int columns, int rows) {
 /// \param in stream to read table information from
 /// \return if the import was successful
 bool Database::importTable(std::istream &in) {
-    std::string input;
-    getline(in, input);
-    Table* table = new Table(input.c_str());
+    std::string name;
+    getline(in, name);
+    Table* table = new Table(name.c_str());
 
     int rows, columns;
-    in >> rows >> columns;
+    in >> columns >> rows;
 
     for (int i = 0; i < columns; i++) {
         int columnType;
@@ -312,6 +276,21 @@ bool Database::deleteRows(char const *tableName, int columnIndex, Value *value) 
     if (tableIndex == -1) { return false; }
 
     tables[tableIndex]->deleteElement(columnIndex, value);
+    return true;
+}
+
+
+/// Add table to database
+/// \param table pointer to a table
+/// \return if the table was added successfully
+bool Database::addTable(Table* table) {
+    if (getTableByName(table->getName()) != -1) {
+        return false;
+    }
+
+    if (count == capacity) { expand(); }
+    tables[count] = table;
+    count++;
     return true;
 }
 

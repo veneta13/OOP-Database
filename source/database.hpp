@@ -20,14 +20,12 @@ class Database {
     int capacity;
 
     /// The tables in the database
-    Table** tables;
+    Table** tables = nullptr;
 
     int getTableByName(const char* name);
     void clear();
     void expand();
     void copy(Database const &other);
-    bool addTable(Table* table);
-    void transformString(std::string& input);
     void readRows(std::istream& in, Table* table, int columns, int rows);
 
 public:
@@ -48,6 +46,7 @@ public:
     bool update(const char* tableName, int searchCol, Value* searchVal, int replaceCol, Value* replaceVal);
     bool deleteRows(const char* tableName, int columnIndex, Value* value);
 
+    bool addTable(Table* table);
     bool insert(const char* tableName, Value** values);
     bool addColumn(std::istream& in, std::ostream& out,const char* tableName);
 

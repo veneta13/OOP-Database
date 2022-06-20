@@ -115,11 +115,15 @@ void Table::copy(Table const &other) {
     rowCount = other.rowCount;
     capacity = other.capacity;
 
-    name = new char[strlen(other.name) + 1];
-    strcpy(name, other.name);
+    if (other.name) {
+        name = new char[strlen(other.name) + 1];
+        strcpy(name, other.name);
+    }
 
-    file = new char[strlen(other.file) + 1];
-    strcpy(file, other.file);
+    if (other.file) {
+        file = new char[strlen(other.file) + 1];
+        strcpy(file, other.file);
+    }
 
     columns = new TableColumn*[capacity];
 

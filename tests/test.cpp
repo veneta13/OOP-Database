@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "modernize-use-auto"
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
@@ -2706,3 +2708,92 @@ TEST_CASE("Table tests")
         delete[] values;
     }
 }
+
+TEST_CASE("Database tests")
+{
+    SECTION("Default constructor")
+    {
+        Database db;
+        std::stringstream out;
+        db.showTables(out);
+
+        REQUIRE(out.str() == "TABLES IN DATABASE:\n");
+    }
+
+    SECTION("Copy constructor")
+    {
+        Table* table1 = new Table("first table");
+        Table* table2 = new Table("second table");
+        table1->addColumn(ColumnType::Integer);
+        table1->addColumn(ColumnType::String);
+        table2->addColumn(ColumnType::FloatingPoint);
+
+        char const* result = "TABLES IN DATABASE:\n"
+                             "first table\n"
+                             "second table\n";
+
+        std::stringstream out;
+        Database db1;
+        REQUIRE(db1.addTable(table1));
+        REQUIRE(db1.addTable(table2));
+
+        db1.showTables(out);
+        REQUIRE(out.str() == result);
+        out = std::stringstream();
+        Database db2(db1);
+        db2.showTables(out);
+        REQUIRE(out.str() == result);
+    }
+
+    SECTION("Operator =")
+    {
+        Table* table1 = new Table("first table");
+        Table* table2 = new Table("second table");
+        table1->addColumn(ColumnType::Integer);
+        table1->addColumn(ColumnType::String);
+        table2->addColumn(ColumnType::FloatingPoint);
+
+        char const* result = "TABLES IN DATABASE:\n"
+                             "first table\n"
+                             "second table\n";
+
+        std::stringstream out;
+        Database db1;
+        REQUIRE(db1.addTable(table1));
+        REQUIRE(db1.addTable(table2));
+
+        db1.showTables(out);
+        REQUIRE(out.str() == result);
+        out = std::stringstream();
+        Database db2 = db1;
+        db2.showTables(out);
+        REQUIRE(out.str() == result);
+    }
+
+    SECTION("Import and export tables")
+    {
+        char const* file = "My table\n"
+                           "3 2 1 2 3\n"
+                           "-3\n"
+                           "5.6\n"
+                           "\"My string\"\"\n"
+                           "4\n"
+                           "-5.6\n"
+                           "\"My string 2\"\"\n";
+
+        std::stringstream sstream(file);
+
+        Database db;
+        db.importTable(sstream);
+        sstream = std::stringstream();
+
+        db.showTables(sstream);
+        REQUIRE(sstream.str() == "TABLES IN DATABASE:\nMy table\n");
+        sstream = std::stringstream();
+
+        db.exportTable(sstream, "My table");
+        REQUIRE(sstream.str() == file);
+    }
+}
+
+#pragma clang diagnostic pop
