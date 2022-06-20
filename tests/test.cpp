@@ -2871,6 +2871,31 @@ TEST_CASE("Database tests")
                              "|         1|         4|      -5.6|\"My string 2\"\"|\n"
                              "Enter: 1 - next page | 2 - previous page | [] - quit\n");
     }
+
+    SECTION("Select")
+    {
+        Value* val4 = new IntegerValue(4);
+        char const* file = "My table\n"
+                           "3 2 1 2 3\n"
+                           "-3\n"
+                           "5.6\n"
+                           "\"My string\"\"\n"
+                           "4\n"
+                           "-5.6\n"
+                           "\"My string 2\"\"\n";
+        std::stringstream in("1 p"), out, filestr(file);
+        Database db;
+        db.importTable(filestr);
+
+        REQUIRE(db.select(out, in, "My table", 0, val4));
+
+        REQUIRE(out.str() == "|         1|         4|      -5.6|\"My string 2\"\"|\n"
+                             "Enter: 1 - next page | 2 - previous page | [] - quit\n"
+                             "|         1|         4|      -5.6|\"My string 2\"\"|\n"
+                             "Enter: 1 - next page | 2 - previous page | [] - quit\n");
+
+        delete val4;
+    }
 }
 
 #pragma clang diagnostic pop
