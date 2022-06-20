@@ -3006,6 +3006,20 @@ TEST_CASE("Database tests")
         delete flov2;
         delete[] values;
     }
+
+    SECTION("Add column")
+    {
+        std::stringstream out , in("1");
+        Table* table = new Table("first table");
+        Database db;
+        REQUIRE(db.addTable(table));
+        REQUIRE(db.addColumn(in, out, "first table"));
+
+        out = std::stringstream();
+        db.describe(out, "first table");
+        REQUIRE(out.str() == "COLUMN TYPES:\n"
+                             "0 - Integer\n");
+    }
 }
 
 #pragma clang diagnostic pop
