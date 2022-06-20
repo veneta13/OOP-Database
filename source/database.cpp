@@ -80,7 +80,7 @@ void Database::copy(Database const &other) {
 /// Search for table in database by name
 /// \param name name to search by
 /// \return index if the table if found, else -1
-int Database::getTableByName(const char *name) {
+int Database::getTableByName(const char *name) const {
     for (int i = 0; i < count; i++) {
         if (strcmp(tables[i]->getName(), name) == 0) {
             return i;
@@ -194,6 +194,21 @@ bool Database::describe(std::ostream &out, const char* tableName) {
 
     tables[tableIndex]->describe(out);
     return true;
+}
+
+
+/// Getter for count
+/// \return the value of count
+int Database::countTables() const {
+    return count;
+}
+
+
+/// Getter for table name
+/// \param index index of the table
+/// \return name of the table
+char* Database::getTableName(int index) const {
+    return tables[index]->getName();
 }
 
 
@@ -396,4 +411,40 @@ bool Database::rename(char const *oldName, char const *newName) {
 
     tables[oldNameIndex]->setName(newName);
     return true;
+}
+
+
+/// Getter for column type
+/// \param tableName name of table to search in
+/// \param columnIndex index of the column
+/// \return type of the column
+ColumnType Database::getColumnType(char const *tableName, int columnIndex) {
+    int tableIndex = getTableByName(tableName);
+    if (tableIndex == -1) { throw std::invalid_argument("Invalid table"); }
+
+    return tables[tableIndex]->getColumnType(columnIndex);
+}
+
+
+/// Count rows containing a value
+/// \param tableName table to search in
+/// \param columnIndex column to search in
+/// \param value value to search for
+/// \return count of rows
+int Database::countRows(const char* tableName, int columnIndex, Value* value) const {
+    int tableIndex = getTableByName(tableName);
+    if (tableIndex == -1) { throw std::invalid_argument("Invalid table"); }
+
+    return tables[tableIndex]->countRows(columnIndex, value);
+}
+
+
+/// Getter for column count
+/// \param tableName table to search in
+/// \return number of columns
+int Database::countColumns(char const *tableName) const {
+    int tableIndex = getTableByName(tableName);
+    if (tableIndex == -1) { throw std::invalid_argument("Invalid table"); }
+
+    return tables[tableIndex]->countColumns();
 }

@@ -59,6 +59,7 @@ public:
     void deleteElement(int columnIndex, Value* value);
     void updateElements(int columnIndex, Value* value, DynamicArray<int>& indexes);
 
+    int countColumns() const;
     int countRows(int columnIndex, Value* value) const;
 
     Table* innerJoin(Table const& other, int columnTable1, int columnTable2) const;

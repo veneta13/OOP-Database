@@ -22,7 +22,7 @@ class Database {
     /// The tables in the database
     Table** tables = nullptr;
 
-    int getTableByName(const char* name);
+    int getTableByName(const char* name) const;
     void clear();
     void expand();
     void copy(Database const &other);
@@ -54,6 +54,14 @@ public:
     bool aggregate(std::ostream& out, const char* tableName, int searchCol, Value* value, int aggregCol, Operations operation);
 
     bool rename(const char* oldName, const char* newName);
+
+    int countRows(const char* tableName, int columnIndex, Value* value) const;
+
+    int countTables() const;
+    int countColumns(const char* tableName) const;
+
+    char* getTableName(int index) const;
+    ColumnType getColumnType(const char* tableName, int columnIndex);
 };
 
 

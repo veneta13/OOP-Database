@@ -483,3 +483,10 @@ std::ostream &operator<<(std::ostream &out, Table const &table) {
 
     return out;
 }
+
+
+/// Getter for column count
+/// \return the number of columns
+int Table::countColumns() const {
+    return columnCount;
+}
