@@ -242,7 +242,7 @@ char *Table::getFile() const {
 
 /// Output the types of the table columns
 /// \param out
-void Table::describe(std::ostream& out) {
+void Table::describe(std::ostream& out) const {
     out << "COLUMN TYPES:\n";
     for (int i = 0; i < columnCount; i++) {
         out << i << " - ";
@@ -258,6 +258,15 @@ void Table::describe(std::ostream& out) {
                 break;
         }
     }
+}
+
+
+/// Getter for column type
+/// \param index index of the column
+/// \return type of the column
+ColumnType Table::getColumnType(int index) const {
+    checkColumnIndex(index);
+    return columns[index]->columnType();
 }
 
 
