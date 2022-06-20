@@ -2848,6 +2848,29 @@ TEST_CASE("Database tests")
         db.describe(out, "table 3");
         REQUIRE(out.str() == "COLUMN TYPES:\n");
     }
+
+    SECTION("Print by pages") {
+        char const* file = "My table\n"
+                           "3 2 1 2 3\n"
+                           "-3\n"
+                           "5.6\n"
+                           "\"My string\"\"\n"
+                           "4\n"
+                           "-5.6\n"
+                           "\"My string 2\"\"\n";
+        std::stringstream in("1 p"), out, filestr(file);
+        Database db;
+        db.importTable(filestr);
+
+        db.printByPages(out, in, "My table");
+
+        REQUIRE(out.str() == "|         0|        -3|       5.6|\"My string\"\"|\n"
+                             "|         1|         4|      -5.6|\"My string 2\"\"|\n"
+                             "Enter: 1 - next page | 2 - previous page | [] - quit\n"
+                             "|         0|        -3|       5.6|\"My string\"\"|\n"
+                             "|         1|         4|      -5.6|\"My string 2\"\"|\n"
+                             "Enter: 1 - next page | 2 - previous page | [] - quit\n");
+    }
 }
 
 #pragma clang diagnostic pop
