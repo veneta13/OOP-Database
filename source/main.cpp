@@ -5,4 +5,5 @@ int main()
 {
     Executor executor;
     while (executor.enter(std::cout, std::cin)) ;
+    return 0;
 }

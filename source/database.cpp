@@ -98,29 +98,29 @@ int Database::getTableByName(const char *name) const {
 void Database::readRows(std::istream& in, Table* table, int columns, int rows) {
     for (int i = 0; i < rows; i++) {
         Value** values = new Value*[columns];
-        std::string line;
 
         for (int j = 0; j < columns; j++) {
+            std::string line;
+            std::getline(in, line);
+
+            if (line == "NULL") {
+                values[j] = new NullValue();
+                continue;
+            }
+
+            std::istringstream linestr(line);
             if (table->getColumnType(j) == ColumnType::Integer) {
                 int temp;
-                in >> temp;
+                linestr >> temp;
                 values[j] = new IntegerValue(temp);
-                std::getline(in, line);
             }
             else if (table->getColumnType(j) == ColumnType::FloatingPoint) {
                 double temp;
-                in >> temp;
+                linestr >> temp;
                 values[j] = new FloatValue(temp);
-                std::getline(in, line);
             }
             else {
-                std::getline(in, line);
-                if (line == "NULL") {
-                    values[j] = new NullValue();
-                }
-                else {
-                    values[j] = new StringValue(line.c_str());
-                }
+                values[j] = new StringValue(line.c_str());
             }
         }
 
@@ -154,6 +154,7 @@ bool Database::importTable(std::istream &in) {
         table->addColumn((ColumnType)columnType);
     }
 
+    in.ignore();
     readRows(in, table, columns, rows);
 
     if (addTable(table)) {
@@ -227,11 +228,11 @@ bool Database::printByPages(std::ostream &out, std::istream &in, const char* tab
         out << "Enter: 1 - next page | 2 - previous page | [] - quit\n";
         int input;
         in >> input;
+        in.ignore();
         if (input == 1) { page++; }
         else if (input == 2) { page--; }
-        else { break; }
+        else { return true; }
     }
-    return true;
 }
 
 

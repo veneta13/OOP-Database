@@ -57,31 +57,37 @@ Executor::~Executor() {
 /// \return the value
 Value* Executor::readValue(std::ostream& out, std::istream& in, ColumnType valueType) {
     out << "Enter value:\n";
+    std::string line;
+    std::getline(in, line);
+
+    if (line == "NULL") {
+        return new NullValue();
+    }
+
+    std::istringstream linestr(line);
     if (valueType == ColumnType::Integer) {
         int temp;
-        in >> temp;
+        linestr >> temp;
         return new IntegerValue(temp);
     }
     else if (valueType == ColumnType::FloatingPoint) {
         double temp;
-        in >> temp;
+        linestr >> temp;
         return new FloatValue(temp);
     }
     else {
-        std::string line;
-        std::getline(in, line);
-        if (line == "NULL") {
-            return new NullValue();
-        }
-        else {
-            return new StringValue(line.c_str());
-        }
+        return new StringValue(line.c_str());
     }
 }
 
 
+/// Choose a function
+/// \param out output stream to write prompts in
+/// \param in input stream to read user input from
+/// \return if the program should exit
 bool Executor::chooseFunction(std::ostream& out, std::istream& in) {
     std::string input;
+    in.clear();
     try {
         std::getline(in, input);
         if (input == "open") { open(out, in); }
@@ -103,11 +109,15 @@ bool Executor::chooseFunction(std::ostream& out, std::istream& in) {
         else if (input == "rename") { rename(out, in); }
         else if (input == "count") { count(out, in); }
         else if (input == "aggregate") { aggregate(out, in); }
-        else { return exit(out, in); }
+        else if (input == "exit") { return exit(out, in); }
         return true;
     }
     catch (std::invalid_argument const& ex) {
         std::cout << ex.what() << '\n';
+        return true;
+    }
+    catch (...) {
+        std::cout << "An error has occured!\n";
         return true;
     }
 }
@@ -148,10 +158,13 @@ bool Executor::enter(std::ostream& out, std::istream& in) {
 /// \param out output stream to write prompts in
 /// \param in input stream to read user input from
 void Executor::open(std::ostream& out, std::istream& in) {
+    if (database) {
+        delete database;
+        database = new Database();
+    }
     std::string str;
     std::ifstream file;
     out << "Enter name of the database file:\n";
-    in.ignore();
     std::getline(in, str);
 
     file.open(str.c_str());
@@ -165,11 +178,11 @@ void Executor::open(std::ostream& out, std::istream& in) {
     strcpy(dbFile, str.c_str());
 
     int tableCount;
-    in >> tableCount;
-    std::getline(in, str);
+    file >> tableCount;
+    std::getline(file, str);
 
     for(int i = 0; i < tableCount; i++) {
-        database->importTable(in);
+        database->importTable(file);
     }
 
     out << "\nFile read successfully!\n";
@@ -190,10 +203,10 @@ void Executor::save(std::ostream& out, std::istream& in) {
         return;
     }
 
-    out << database->countTables() << "\n";
+    file << database->countTables() << "\n";
 
     for (int i = 0; i < database->countTables(); i++) {
-        database->exportTable(out, database->getTableName(i));
+        database->exportTable(file, database->getTableName(i));
     }
 
     out << "\nDatabase saved successfully!\n";
@@ -224,7 +237,6 @@ void Executor::saveas(std::ostream &out, std::istream &in) {
     std::string str;
     std::ofstream file;
     out << "Enter name of the database file:\n";
-    in.ignore();
     std::getline(in, str);
 
     file.open(str.c_str());
@@ -233,10 +245,16 @@ void Executor::saveas(std::ostream &out, std::istream &in) {
         return;
     }
 
-    out << database->countTables() << "\n";
+    file << database->countTables() << "\n";
 
     for (int i = 0; i < database->countTables(); i++) {
-        database->exportTable(out, database->getTableName(i));
+        database->exportTable(file, database->getTableName(i));
+    }
+
+    if (dbFile) {
+        delete[] dbFile;
+        dbFile = new char[strlen(str.c_str()) + 1];
+        strcpy(dbFile, str.c_str());
     }
 
     out << "\nDatabase saved successfully!\n";
@@ -251,9 +269,8 @@ void Executor::saveas(std::ostream &out, std::istream &in) {
 /// \param in input stream to read user input from
 void Executor::import(std::ostream &out, std::istream &in) {
     std::string str;
-    std::ofstream file;
+    std::ifstream file;
     out << "Enter name of the table file:\n";
-    in.ignore();
     std::getline(in, str);
 
     file.open(str.c_str());
@@ -262,7 +279,7 @@ void Executor::import(std::ostream &out, std::istream &in) {
         return;
     }
 
-    database->importTable(in);
+    database->importTable(file);
 
     out << "\nTable added successfully!\n";
 
@@ -285,7 +302,6 @@ void Executor::showtables(std::ostream &out, std::istream &in) {
 void Executor::describe(std::ostream &out, std::istream &in) {
     std::string str;
     out << "Enter name of the table to describe:\n";
-    in.ignore();
     std::getline(in, str);
 
     database->describe(out, str.c_str());
@@ -297,11 +313,11 @@ void Executor::describe(std::ostream &out, std::istream &in) {
 /// \param in input stream to read user input from
 void Executor::print(std::ostream &out, std::istream &in) {
     std::string str;
-    out << "Enter name of the table to describe:\n";
-    in.ignore();
+    out << "Enter name of the table to print:\n";
     std::getline(in, str);
 
     database->printByPages(out, in, str.c_str());
+    in.ignore();
 }
 
 
@@ -312,11 +328,9 @@ void Executor::export_(std::ostream &out, std::istream &in) {
     std::string strTable, strFile;
     std::ofstream file;
     out << "Enter name of the table to export:\n";
-    in.ignore();
     std::getline(in, strTable);
 
     out << "Enter name of the file to export to:\n";
-    in.ignore();
     std::getline(in, strFile);
 
     file.open(strFile.c_str());
@@ -338,12 +352,9 @@ void Executor::select(std::ostream &out, std::istream &in) {
     std::string str;
     int column;
     out << "Enter name of the table:\n";
-    in.ignore();
     std::getline(in, str);
     out << "Enter the index of the column:\n";
-    in.ignore();
     in >> column;
-    in.ignore();
     Value* value = readValue(out, in, database->getColumnType(str.c_str(), column));
 
     database->select(out, in, str.c_str(), column, value);
@@ -357,7 +368,6 @@ void Executor::select(std::ostream &out, std::istream &in) {
 void Executor::addcolumn(std::ostream &out, std::istream &in) {
     std::string str;
     out << "Enter name of the table:\n";
-    in.ignore();
     std::getline(in, str);
 
     database->addColumn(in, out, str.c_str());
@@ -372,18 +382,16 @@ void Executor::update(std::ostream &out, std::istream &in) {
     std::string strTable;
     int searchCol, replCol;
     out << "Enter name of the table:\n";
-    in.ignore();
     std::getline(in, strTable);
 
     out << "Enter the index of the column to search:\n";
-    in.ignore();
     in >> searchCol;
 
     out << "Enter the index of the column to replace in:\n";
-    in.ignore();
     in >> replCol;
-    in.ignore();
 
+    in.clear();
+    in.ignore();
     Value* valueS = readValue(out, in, database->getColumnType(strTable.c_str(), searchCol));
     Value* valueR = readValue(out, in, database->getColumnType(strTable.c_str(), replCol));
 
@@ -401,11 +409,11 @@ void Executor::delete_(std::ostream &out, std::istream &in) {
     std::string str;
     int column;
     out << "Enter name of the table:\n";
-    in.ignore();
     std::getline(in, str);
     out << "Enter the index of the column:\n";
-    in.ignore();
     in >> column;
+
+    in.clear();
     in.ignore();
     Value* value = readValue(out, in, database->getColumnType(str.c_str(), column));
 
@@ -422,13 +430,19 @@ void Executor::insert(std::ostream &out, std::istream &in) {
     std::string str;
     int column;
     out << "Enter name of the table:\n";
-    in.ignore();
     std::getline(in, str);
 
     Value** values = new Value*[database->countColumns(str.c_str())];
 
     for (int i = 0; i < database->countColumns(str.c_str()); i++) {
         values[i] = readValue(out, in, database->getColumnType(str.c_str(), i));
+    }
+
+    if (database->insert(str.c_str(), values)) {
+        out << "Successfully inserted into database!\n";
+    }
+    else {
+        out << "Values count NOT be inserted!\n";
     }
 
     for (int i = 0; i < database->countColumns(str.c_str()); i++) {
@@ -446,14 +460,11 @@ void Executor::innerjoin(std::ostream &out, std::istream &in) {
     int column1, column2;
 
     out << "Enter name of the first table:\n";
-    in.ignore();
     std::getline(in, table1);
     out << "Enter name of the second table:\n";
-    in.ignore();
     std::getline(in, table2);
     out << "Enter the indexes of the columns:\n";
-    in.ignore();
-    in >> column1, column2;
+    in >> column1 >> column2;
 
     database->innerJoin(out, table1.c_str(), column1, table2.c_str(), column2);
 }
@@ -466,13 +477,16 @@ void Executor::rename(std::ostream &out, std::istream &in) {
     std::string table1, table2;
 
     out << "Enter the old name of table:\n";
-    in.ignore();
     std::getline(in, table1);
     out << "Enter the new name of table:\n";
-    in.ignore();
     std::getline(in, table2);
 
-    database->rename(table1.c_str(), table2.c_str());
+    if (database->rename(table1.c_str(), table2.c_str())) {
+        out << "Table was renamed successfully!\n";
+    }
+    else {
+        out << "Table could not be renamed!\n";
+    }
 }
 
 
@@ -483,15 +497,15 @@ void Executor::count(std::ostream &out, std::istream &in) {
     std::string str;
     int column;
     out << "Enter name of the table:\n";
-    in.ignore();
     std::getline(in, str);
     out << "Enter the index of the column:\n";
-    in.ignore();
     in >> column;
+
+    in.clear();
     in.ignore();
     Value* value = readValue(out, in, database->getColumnType(str.c_str(), column));
 
-    database->countRows(str.c_str(), column, value);
+    out << "COUNT:" << database->countRows(str.c_str(), column, value) << "\n";
     delete value;
 }
 
@@ -503,14 +517,13 @@ void Executor::aggregate(std::ostream &out, std::istream &in) {
     std::string str;
     int columnS, columnA, operation;
     out << "Enter name of the table:\n";
-    in.ignore();
     std::getline(in, str);
     out << "Enter the index of the column to search in:\n";
-    in.ignore();
     in >> columnS;
     out << "Enter the index of the aggregate in:\n";
-    in.ignore();
     in >> columnA;
+
+    in.clear();
     in.ignore();
     Value* value = readValue(out, in, database->getColumnType(str.c_str(), columnS));
 
