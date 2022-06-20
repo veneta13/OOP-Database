@@ -338,6 +338,7 @@ void Table::deleteElement(int columnIndex, Value *value) {
     for (int i = 0; i < columnCount; i++) {
         columns[i]->deleteByIndexes(indexes);
     }
+    rowCount -= indexes.size();
 }
 
 
